@@ -231,15 +231,22 @@ CONTENT_END`;
       { role: "assistant", content: "收到，我會按照格式撰寫新聞稿。" },
       ...messages
     ];
-    const res = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "claude-haiku-4-5-20251001",
-        max_tokens: 2000,
-        messages: fullMessages
-      })
-    });
+    const res = await fetch("/api/claude", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    prompt: document.getElementById("你的輸入欄位ID").value
+  })
+})
+.then(res => res.json())
+.then(data => {
+  document.getElementById("結果區").innerText = data.result;
+})
+.catch(err => {
+  console.error(err);
+});
 
     const rawText = await res.text();
     console.log("HTTP:", res.status, rawText.substring(0,300));
