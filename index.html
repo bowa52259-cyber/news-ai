@@ -202,7 +202,7 @@
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleChatRevision(); }
   };
 
-  // ── Claude API ──────────────────────────────────────────────
+  // ── System Prompt ────────────────────────────────────────────
   const SYSTEM_PROMPT = `你是「財政部高雄國稅局」的新聞稿撰寫專員，擁有以下法規知識：
 1. 房地合一稅：所得稅法第4條之4、第14條之4、第4條之5（自住400萬免稅）
 2. 遺產稅：農地繼承持續農用滿5年免徵（遺贈稅法第17條）
@@ -224,47 +224,59 @@ CONTENT_START
 （此處為新聞稿正文）
 CONTENT_END`;
 
+  // ── Claude API ───────────────────────────────────────────────
   async function callClaude(messages) {
-  const res = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      model: "claude-sonnet-4-20250514",
-      max_tokens: 1000,
-      system: SYSTEM_PROMPT,
-      messages: messages
-    })
-  });
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    throw new Error(`HTTP ${res.status}: ${err.error?.message || '未知錯誤'}`);
-  }
-  const data = await res.json();
-  return data.content.map(b => b.type === "text" ? b.text : "").join("");
-}
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": window.ANTHROPIC_API_KEY || "",
+        "anthropic-version": "2023-06-01",
+        "anthropic-dangerous-direct-browser-access": "true"
+      },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 2000,
+        system: SYSTEM_PROMPT,
+        messages: messages
+      })
+    });
 
-  // ── 解析回應 ────────────────────────────────────────────────
+    if (!res.ok) {
+      let em = `HTTP ${res.status}: `;
+      try {
+        const e = await res.json();
+        em += e.error?.message || JSON.stringify(e).substring(0, 200);
+      } catch {
+        em += await res.text().then(t => t.substring(0, 200)).catch(() => "未知錯誤");
+      }
+      throw new Error(em);
+    }
+
+    const data = await res.json();
+    return data.content.map(b => b.type === "text" ? b.text : "").join("");
+  }
+
+  // ── 解析回應 ─────────────────────────────────────────────────
   function parseResponse(text) {
     console.log("=== AI 回應原文 ===\n", text);
 
-    // 解析標題：支援多種格式
+    // 解析標題
     const titles = [];
     for (let i = 1; i <= 5; i++) {
-      // 格式1: TITLE1::內容
       let m = text.match(new RegExp(`TITLE${i}::(.+)`));
       if (!m) m = text.match(new RegExp(`\\[TITLE_${i}\\]\\s*(.+)`));
       if (!m) m = text.match(new RegExp(`標題${i}[：:：]\\s*(.+)`));
       if (m) titles.push(m[1].trim());
     }
 
-    // 解析正文：支援多種分隔符
+    // 解析正文
     let content = "";
     let cm = text.match(/CONTENT_START\s*([\s\S]*?)\s*CONTENT_END/);
     if (!cm) cm = text.match(/\[CONTENT_START\]\s*([\s\S]*?)\s*\[CONTENT_END\]/);
     if (cm) {
       content = cm[1].trim();
     } else {
-      // fallback：移除標題行，其餘全部當作正文
       content = text
         .replace(/TITLE\d+::.+/g, '')
         .replace(/\[TITLE_\d+\].+/g, '')
@@ -290,11 +302,7 @@ CONTENT_END`;
 
     // 渲染正文
     const display = document.getElementById('contentDisplay');
-    if (content) {
-      display.innerText = content;
-    } else {
-      display.innerText = "⚠️ 未能解析正文，原始回應：\n\n" + text;
-    }
+    display.innerText = content || "⚠️ 未能解析正文，原始回應：\n\n" + text;
     display.contentEditable = "false";
     display.classList.remove('editable');
     isEditing = false;
@@ -455,7 +463,6 @@ ${currentNewsContent}
     m.className = `chat-msg ${role}`; m.innerText = text;
     hist.appendChild(m); hist.scrollTop = hist.scrollHeight;
   }
-  <!-- redeploy -->
 </script>
 </body>
 </html>
