@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>財政部高雄國稅局 · 新聞稿AI生成系統</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script>
+    if (typeof pdfjsLib !== 'undefined') {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap');
+    :root {
+      --bg:#f5f3ee;--surface:#fff;--surface-2:#f0ede6;--border:#d8d0c4;
+      --border-focus:#8b6914;--accent:#8b6914;--accent-dark:#5c4509;
+      --accent-light:#f5e9cc;--text:#1a1612;--text-muted:#6b5e4e;
+      --text-faint:#a0937f;--success:#2d6a4f;--error:#9b2226;
+      --shadow:0 2px 12px rgba(100,80,40,.10);--shadow-lg:0 8px 32px rgba(100,80,40,.15);
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text);height:100vh;display:flex;flex-direction:column;overflow:hidden}
+    header{background:var(--accent-dark);color:#fff;padding:0 28px;display:flex;align-items:center;justify-content:space-between;height:56px;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+    .header-logo{display:flex;align-items:center;gap:10px}
+    .badge{background:var(--accent);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;letter-spacing:1px}
+    .header-title{font-family:'Noto Serif TC',serif;font-size:17px;font-weight:700;letter-spacing:1px}
+    .header-tag{font-size:11px;background:rgba(255,255,255,.15);padding:3px 10px;border-radius:99px}
+    .main{display:grid;grid-template-columns:400px 1fr;flex:1;overflow:hidden;min-height:0}
+    .left-panel{background:var(--surface);border-right:1.5px solid var(--border);display:flex;flex-direction:column;overflow:hidden}
+    .panel-header{padding:16px 20px;border-bottom:1px solid var(--border);background:var(--surface-2);flex-shrink:0}
+    .panel-header h2{font-family:'Noto Serif TC',serif;font-size:14px;font-weight:700;color:var(--accent-dark)}
+    .panel-header p{font-size:11px;color:var(--text-muted);margin-top:3px}
+    .left-scroll{flex:1;overflow-y:auto;padding:18px 20px;display:flex;flex-direction:column;gap:18px}
+    .field-group{display:flex;flex-direction:column;gap:6px}
+    .field-label{font-size:12px;font-weight:700;color:var(--text-muted);display:flex;align-items:center;gap:5px}
+    .required{color:var(--error)}
+    textarea,input[type=text]{font-family:'Noto Sans TC',sans-serif;font-size:13px;padding:10px 12px;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;outline:none;transition:all .2s;width:100%}
+    textarea:focus,input[type=text]:focus{border-color:var(--border-focus);box-shadow:0 0 0 3px rgba(139,105,20,.1)}
+    .chips{display:flex;flex-wrap:wrap;gap:6px}
+    .chip{padding:5px 13px;border-radius:99px;border:1.5px solid var(--border);font-size:12px;background:var(--bg);cursor:pointer;transition:.2s;font-family:'Noto Sans TC',sans-serif}
+    .chip.active{background:var(--accent);color:#fff;border-color:var(--accent);font-weight:700}
+    .upload-zone{border:2px dashed var(--border);border-radius:10px;padding:16px;text-align:center;cursor:pointer;background:var(--bg);position:relative}
+    .upload-zone:hover{border-color:var(--accent);background:var(--accent-light)}
+    .upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer}
+    .file-list{margin-top:6px;display:flex;flex-direction:column;gap:5px}
+    .file-item{font-size:11px;background:var(--accent-light);padding:5px 9px;border-radius:6px;display:flex;justify-content:space-between}
+    .generate-bar{padding:16px 20px;border-top:1.5px solid var(--border);flex-shrink:0}
+    .btn-generate{width:100%;padding:14px;background:var(--accent-dark);color:#fff;border:none;border-radius:10px;font-family:'Noto Serif TC',serif;font-weight:700;font-size:15px;cursor:pointer;transition:.2s;display:flex;align-items:center;justify-content:center;gap:8px}
+    .btn-generate:hover{background:var(--accent);box-shadow:var(--shadow-lg)}
+    .btn-generate:disabled{background:var(--text-faint);cursor:not-allowed}
+    .right-panel{display:flex;flex-direction:column;background:var(--bg);overflow:hidden}
+    .title-section{background:var(--surface);border-bottom:1.5px solid var(--border);padding:16px 28px;flex-shrink:0;max-height:190px;overflow-y:auto}
+    .section-label{font-size:10px;font-weight:700;color:var(--text-faint);margin-bottom:10px;text-transform:uppercase;letter-spacing:1px}
+    .title-candidates{display:flex;flex-direction:column;gap:6px}
+    .title-option{padding:9px 14px;border:1.5px solid var(--border);border-radius:8px;background:var(--bg);cursor:pointer;display:flex;gap:10px;align-items:center;transition:.2s;font-size:13px}
+    .title-option:hover,.title-option.selected{border-color:var(--accent);background:var(--accent-light)}
+    .title-num{width:22px;height:22px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+    .selected .title-num{background:var(--accent);color:#fff}
+    .content-section{flex:1;padding:16px 28px 0;display:flex;flex-direction:column;overflow:hidden;min-height:0}
+    .content-area-wrapper{flex:1;background:#fff;border:1.5px solid var(--border);border-radius:12px;display:flex;flex-direction:column;overflow:hidden;box-shadow:var(--shadow);position:relative;min-height:0}
+    .content-toolbar{padding:8px 14px;border-bottom:1px solid var(--border);background:var(--surface-2);display:flex;gap:8px;align-items:center;flex-wrap:wrap;flex-shrink:0}
+    .toolbar-btn{padding:5px 11px;border:1px solid var(--border);border-radius:6px;background:#fff;font-size:12px;cursor:pointer;font-family:'Noto Sans TC',sans-serif}
+    .toolbar-btn:hover{background:var(--accent-light);border-color:var(--accent)}
+    .content-display{flex:1;padding:20px 24px;overflow-y:auto;font-size:14px;line-height:1.9;white-space:pre-wrap;outline:none;min-height:0}
+    .content-display.editable{outline:2px solid var(--accent)}
+    .chat-section{padding:12px 28px 16px;background:#fff;border-top:1.5px solid var(--border);flex-shrink:0;display:flex;flex-direction:column;gap:8px}
+    .quick-actions-label{font-size:10px;font-weight:700;color:var(--text-faint)}
+    .quick-actions{display:flex;flex-wrap:wrap;gap:5px}
+    .quick-btn{padding:4px 11px;border-radius:99px;border:1.5px solid var(--border);background:var(--bg);font-size:11px;color:var(--text-muted);cursor:pointer;font-family:'Noto Sans TC',sans-serif;transition:all .15s}
+    .quick-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
+    .quick-btn:disabled{opacity:.4;cursor:not-allowed}
+    .chat-history{max-height:80px;overflow-y:auto;display:flex;flex-direction:column;gap:5px}
+    .chat-msg{font-size:12px;padding:7px 11px;border-radius:8px;max-width:85%}
+    .chat-msg.user{align-self:flex-end;background:var(--accent-dark);color:#fff}
+    .chat-msg.ai{align-self:flex-start;background:var(--surface-2);border:1px solid var(--border)}
+    .chat-input-row{display:flex;gap:8px}
+    .chat-input{flex:1;padding:9px 13px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;outline:none;resize:none;font-family:'Noto Sans TC',sans-serif}
+    .btn-send{background:var(--accent);color:#fff;border:none;padding:0 16px;border-radius:8px;cursor:pointer;transition:.2s;font-size:15px}
+    .btn-send:hover{background:var(--accent-dark)}
+    .btn-send:disabled{background:var(--text-faint);cursor:not-allowed}
+    .loading-overlay{position:absolute;inset:0;background:rgba(255,255,255,.88);display:none;align-items:center;justify-content:center;flex-direction:column;z-index:10;border-radius:12px}
+    .loading-overlay.show{display:flex}
+    .spinner{width:30px;height:30px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .loading-text{margin-top:10px;font-size:13px;color:var(--text-muted)}
+    .toast{position:fixed;bottom:20px;right:20px;background:#333;color:#fff;padding:10px 18px;border-radius:8px;font-size:12px;opacity:0;transition:.3s;z-index:9999;pointer-events:none}
+    .toast.show{opacity:1}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-logo">
+    <span class="badge">GOV</span>
+    <span class="header-title">財政部高雄國稅局 · 新聞稿AI生成系統</span>
+  </div>
+  <span class="header-tag">✦ Powered by Claude</span>
+</header>
+
+<div class="main">
+  <div class="left-panel">
+    <div class="panel-header">
+      <h2>📝 新聞稿輸入區</h2>
+      <p>填寫主題後按下「產出新聞稿」，系統將自動產出專業草稿。</p>
+    </div>
+    <div class="left-scroll">
+      <div class="field-group">
+        <label class="field-label">📋 新聞稿主題與內容摘要 <span class="required">*</span></label>
+        <textarea id="mainContent" rows="6" placeholder="例如：房地合一稅自住房地優惠適用條件、遺產稅農地扣除額規定..."></textarea>
+      </div>
+      <div class="field-group">
+        <label class="field-label">📚 補充參考資料（可貼入法條或筆記）</label>
+        <textarea id="refContent" rows="4" placeholder="貼入相關法條、會議紀錄或 NotebookLM 產出的重點..."></textarea>
+      </div>
+      <div class="field-group">
+        <label class="field-label">📎 上傳參考附件（PDF / TXT）</label>
+        <div class="upload-zone">
+          <input type="file" id="fileInput" multiple accept=".pdf,.txt">
+          <div style="font-size:22px">📂</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:6px">點擊或拖放檔案</div>
+        </div>
+        <div id="fileList" class="file-list"></div>
+      </div>
+      <div class="field-group">
+        <label class="field-label">🎨 撰寫風格</label>
+        <div class="chips" id="toneChips">
+          <div class="chip active" data-val="正式嚴謹">正式嚴謹</div>
+          <div class="chip" data-val="親民易懂">親民易懂</div>
+          <div class="chip" data-val="警示提醒">警示提醒</div>
+          <div class="chip" data-val="教育說明">教育說明</div>
+        </div>
+      </div>
+    </div>
+    <div class="generate-bar">
+      <button class="btn-generate" id="generateBtn" onclick="generateContent()">✦ 產出新聞稿</button>
+    </div>
+  </div>
+
+  <div class="right-panel">
+    <div class="title-section">
+      <div class="section-label">標題選項（點選其中一個）</div>
+      <div id="titleArea">
+        <div style="color:var(--text-faint);font-style:italic;font-size:13px">點擊「產出新聞稿」後，此處將顯示標題建議...</div>
+      </div>
+    </div>
+    <div class="content-section">
+      <div class="section-label" style="margin-bottom:8px">稿件正文</div>
+      <div class="content-area-wrapper">
+        <div class="content-toolbar">
+          <button class="toolbar-btn" onclick="copyContent()">📋 複製全文</button>
+          <button class="toolbar-btn" onclick="downloadContent()">💾 下載 TXT</button>
+          <button class="toolbar-btn" id="editBtn" onclick="toggleEdit()">✏️ 手動編輯</button>
+          <button class="toolbar-btn" onclick="clearAll()" style="color:var(--error)">🗑️ 清除</button>
+        </div>
+        <div class="loading-overlay" id="loadingOverlay">
+          <div class="spinner"></div>
+          <div class="loading-text" id="loadingText">AI 正在撰寫中...</div>
+        </div>
+        <div id="contentDisplay" class="content-display" contenteditable="false">新聞稿內容將在此呈現...</div>
+      </div>
+    </div>
+    <div class="chat-section">
+      <div class="quick-actions-label">⚡ 快速修改：</div>
+      <div class="quick-actions">
+        <button class="quick-btn" onclick="quickAction('請讓語氣更親民易懂')">📢 更親民</button>
+        <button class="quick-btn" onclick="quickAction('請加強法律依據的說明')">⚖️ 加強法條</button>
+        <button class="quick-btn" onclick="quickAction('請新增一個具體案例說明')">📌 加案例</button>
+        <button class="quick-btn" onclick="quickAction('請濃縮精簡，刪除贅詞')">✂️ 精簡</button>
+        <button class="quick-btn" onclick="quickAction('請加強警示提醒的語氣')">⚠️ 強化警示</button>
+        <button class="quick-btn" onclick="quickAction('請重新生成5個標題選項')">🏷️ 換標題</button>
+      </div>
+      <div class="chat-history" id="chatHistory"></div>
+      <div class="chat-input-row">
+        <textarea class="chat-input" id="chatInput" placeholder="輸入指令修正，例如：請將第二段改為房屋買賣案例..." rows="1"></textarea>
+        <button class="btn-send" id="sendBtn" onclick="handleChatRevision()">➤</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  let uploadedFilesContent = "";
+  let currentTone = "正式嚴謹";
+  let isEditing = false;
+  let currentNewsContent = "";
+  let selectedTitle = "";
+  let isLoading = false;
+
+  // 初始化
+  document.querySelectorAll('.chip').forEach(chip => {
+    chip.onclick = () => {
+      document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      currentTone = chip.dataset.val;
+    };
+  });
+  document.getElementById('fileInput').onchange = handleFileUpload;
+  document.getElementById('chatInput').onkeydown = e => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleChatRevision(); }
+  };
+
+  // ── Claude API ──────────────────────────────────────────────
+  const SYSTEM_PROMPT = `你是「財政部高雄國稅局」的新聞稿撰寫專員，擁有以下法規知識：
+1. 房地合一稅：所得稅法第4條之4、第14條之4、第4條之5（自住400萬免稅）
+2. 遺產稅：農地繼承持續農用滿5年免徵（遺贈稅法第17條）
+3. 營業稅：違約金須併入銷售額開立發票（營業稅法第16條）
+4. 自動補報免罰：稅捐稽徵法第48條之1
+
+撰寫規範：
+- 正文首段以「財政部高雄國稅局表示，」開頭
+- 結構：導言→法令說明→案例（甲君/乙君）→結語含服務電話0800-000321
+- 金額用「新臺幣（下同）XXX元」，日期用民國年
+
+你必須嚴格按照以下格式輸出，不得有任何前言或後記：
+TITLE1::第一個標題
+TITLE2::第二個標題
+TITLE3::第三個標題
+TITLE4::第四個標題
+TITLE5::第五個標題
+CONTENT_START
+（此處為新聞稿正文）
+CONTENT_END`;
+
+  async function callClaude(messages) {
+    // 將 system prompt 插入為第一則訊息，避免 ISO-8859-1 header 問題
+    const fullMessages = [
+      { role: "user", content: SYSTEM_PROMPT + "\n\n請回覆：收到，我會按照格式撰寫新聞稿。" },
+      { role: "assistant", content: "收到，我會按照格式撰寫新聞稿。" },
+      ...messages
+    ];
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-haiku-4-5-20251001",
+        max_tokens: 2000,
+        messages: fullMessages
+      })
+    });
+
+    const rawText = await res.text();
+    console.log("HTTP:", res.status, rawText.substring(0,300));
+    if (!res.ok) {
+      let em = `HTTP ${res.status}: `;
+      try { const e = JSON.parse(rawText); em += e.error?.message || rawText.substring(0,200); }
+      catch { em += rawText.substring(0,200); }
+      throw new Error(em);
+    }
+    let data;
+    try { data = JSON.parse(rawText); } catch(e) { throw new Error("解析失敗: " + rawText.substring(0,200)); }
+    return data.content.map(b => b.type === "text" ? b.text : "").join("");
+  }
+
+  // ── 解析回應 ────────────────────────────────────────────────
+  function parseResponse(text) {
+    console.log("=== AI 回應原文 ===\n", text);
+
+    // 解析標題：支援多種格式
+    const titles = [];
+    for (let i = 1; i <= 5; i++) {
+      // 格式1: TITLE1::內容
+      let m = text.match(new RegExp(`TITLE${i}::(.+)`));
+      if (!m) m = text.match(new RegExp(`\\[TITLE_${i}\\]\\s*(.+)`));
+      if (!m) m = text.match(new RegExp(`標題${i}[：:：]\\s*(.+)`));
+      if (m) titles.push(m[1].trim());
+    }
+
+    // 解析正文：支援多種分隔符
+    let content = "";
+    let cm = text.match(/CONTENT_START\s*([\s\S]*?)\s*CONTENT_END/);
+    if (!cm) cm = text.match(/\[CONTENT_START\]\s*([\s\S]*?)\s*\[CONTENT_END\]/);
+    if (cm) {
+      content = cm[1].trim();
+    } else {
+      // fallback：移除標題行，其餘全部當作正文
+      content = text
+        .replace(/TITLE\d+::.+/g, '')
+        .replace(/\[TITLE_\d+\].+/g, '')
+        .replace(/CONTENT_START|CONTENT_END/g, '')
+        .trim();
+    }
+
+    currentNewsContent = content;
+
+    // 渲染標題
+    const titleArea = document.getElementById('titleArea');
+    if (titles.length > 0) {
+      titleArea.innerHTML = `<div class="title-candidates">${
+        titles.map((t, i) => `
+          <div class="title-option" onclick="selectTitle(this,'${t.replace(/'/g, "\\'")}')">
+            <div class="title-num">${i+1}</div>
+            <div style="flex:1">${t}</div>
+          </div>`).join('')
+      }</div>`;
+    } else {
+      titleArea.innerHTML = `<div style="color:var(--text-muted);font-size:12px">⚠️ 未偵測到標題，請檢查 AI 回應格式</div>`;
+    }
+
+    // 渲染正文
+    const display = document.getElementById('contentDisplay');
+    if (content) {
+      display.innerText = content;
+    } else {
+      display.innerText = "⚠️ 未能解析正文，原始回應：\n\n" + text;
+    }
+    display.contentEditable = "false";
+    display.classList.remove('editable');
+    isEditing = false;
+    document.getElementById('editBtn').innerText = "✏️ 手動編輯";
+  }
+
+  // ── 產出新聞稿 ───────────────────────────────────────────────
+  async function generateContent() {
+    const mainText = document.getElementById('mainContent').value.trim();
+    if (!mainText) { showToast("⚠️ 請輸入新聞稿主題或內容摘要"); return; }
+    if (isLoading) return;
+    toggleLoading(true, "AI 正在撰寫初稿...");
+
+    const userMsg = `請撰寫一篇新聞稿。
+
+主題：${mainText}
+補充資料：${document.getElementById('refContent').value || '無'}
+附件：${uploadedFilesContent || '無'}
+風格：${currentTone}`;
+
+    try {
+      const response = await callClaude([{ role: "user", content: userMsg }]);
+      parseResponse(response);
+      addChatMessage("ai", "✅ 初稿已生成，請從上方選擇標題。");
+    } catch (err) {
+      showToast("❌ " + err.message);
+      document.getElementById('contentDisplay').innerText = "❌ 生成失敗：" + err.message + "\n\n請重新嘗試。";
+    } finally {
+      toggleLoading(false);
+    }
+  }
+
+  // ── 修改指令 ─────────────────────────────────────────────────
+  async function handleChatRevision() {
+    const input = document.getElementById('chatInput');
+    const msg = input.value.trim();
+    if (!msg) { showToast("請輸入修改指令"); return; }
+    if (!currentNewsContent) { showToast("請先產出新聞稿初稿"); return; }
+    if (isLoading) return;
+
+    addChatMessage("user", msg);
+    input.value = "";
+    toggleLoading(true, "AI 正在修改中...");
+
+    const userMsg = `目前新聞稿內容：
+${currentNewsContent}
+
+修正指令：${msg}
+
+請依照格式完整輸出修改後的結果。`;
+
+    try {
+      const response = await callClaude([{ role: "user", content: userMsg }]);
+      parseResponse(response);
+      addChatMessage("ai", "✅ 修正完成。");
+    } catch (err) {
+      showToast("❌ " + err.message);
+    } finally {
+      toggleLoading(false);
+    }
+  }
+
+  function quickAction(instruction) {
+    if (isLoading) return;
+    document.getElementById('chatInput').value = instruction;
+    handleChatRevision();
+  }
+
+  // ── 檔案上傳 ─────────────────────────────────────────────────
+  async function handleFileUpload(e) {
+    const files = e.target.files;
+    const list = document.getElementById('fileList');
+    list.innerHTML = ""; uploadedFilesContent = "";
+    for (const file of files) {
+      const item = document.createElement('div');
+      item.className = 'file-item';
+      item.innerHTML = `<span>📄 ${file.name}</span><span style="color:var(--success)">解析中...</span>`;
+      list.appendChild(item);
+      try {
+        const text = file.type === "application/pdf" ? await extractPdfText(file) : await file.text();
+        uploadedFilesContent += `\n附件(${file.name}):\n${text}\n`;
+        item.querySelector('span:last-child').innerText = "✅ 已讀取";
+      } catch { item.querySelector('span:last-child').innerText = "❌ 解析失敗"; }
+    }
+  }
+
+  async function extractPdfText(file) {
+    const pdf = await pdfjsLib.getDocument({ data: await file.arrayBuffer() }).promise;
+    let text = "";
+    for (let i = 1; i <= Math.min(pdf.numPages, 10); i++) {
+      const page = await pdf.getPage(i);
+      const content = await page.getTextContent();
+      text += content.items.map(it => it.str).join(' ');
+    }
+    return text;
+  }
+
+  // ── UI 工具 ──────────────────────────────────────────────────
+  function selectTitle(el, title) {
+    document.querySelectorAll('.title-option').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedTitle = title;
+    showToast("📌 已選定標題");
+  }
+
+  function toggleEdit() {
+    isEditing = !isEditing;
+    const disp = document.getElementById('contentDisplay');
+    disp.contentEditable = isEditing ? "true" : "false";
+    disp.classList.toggle('editable', isEditing);
+    document.getElementById('editBtn').innerText = isEditing ? "✅ 完成編輯" : "✏️ 手動編輯";
+    if (isEditing) { disp.focus(); showToast("✏️ 已進入編輯模式"); }
+    else { currentNewsContent = disp.innerText; showToast("✅ 編輯已儲存"); }
+  }
+
+  function copyContent() {
+    const text = (selectedTitle ? selectedTitle + "\n\n" : "") + document.getElementById('contentDisplay').innerText;
+    navigator.clipboard.writeText(text)
+      .then(() => showToast("✅ 已複製到剪貼簿"))
+      .catch(() => {
+        const ta = document.createElement("textarea");
+        ta.value = text; document.body.appendChild(ta); ta.select();
+        document.execCommand("copy"); document.body.removeChild(ta);
+        showToast("✅ 已複製到剪貼簿");
+      });
+  }
+
+  function downloadContent() {
+    const text = (selectedTitle ? selectedTitle + "\n\n" : "") + document.getElementById('contentDisplay').innerText;
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([text], { type: "text/plain;charset=utf-8" }));
+    a.download = `高雄國稅局新聞稿_${Date.now()}.txt`;
+    a.click();
+  }
+
+  function clearAll() {
+    if (confirm("確定要清除所有內容並重置嗎？")) location.reload();
+  }
+
+  function toggleLoading(show, text = "AI 正在處理中...") {
+    isLoading = show;
+    document.getElementById('loadingOverlay').classList.toggle('show', show);
+    document.getElementById('loadingText').innerText = text;
+    document.getElementById('generateBtn').disabled = show;
+    document.getElementById('sendBtn').disabled = show;
+    document.querySelectorAll('.quick-btn').forEach(b => b.disabled = show);
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.innerText = msg; t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3500);
+  }
+
+  function addChatMessage(role, text) {
+    const hist = document.getElementById('chatHistory');
+    const m = document.createElement('div');
+    m.className = `chat-msg ${role}`; m.innerText = text;
+    hist.appendChild(m); hist.scrollTop = hist.scrollHeight;
+  }
+</script>
+</body>
+</html>
