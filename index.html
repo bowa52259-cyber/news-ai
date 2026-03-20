@@ -225,37 +225,23 @@ CONTENT_START
 CONTENT_END`;
 
   async function callClaude(messages) {
-
-  const res = await fetch("/api/claude", {
+  const res = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
-      prompt: messages.map(m => m.content).join("\n")
+      model: "claude-sonnet-4-20250514",
+      max_tokens: 1000,
+      system: SYSTEM_PROMPT,
+      messages: messages
     })
   });
-
   if (!res.ok) {
-    throw new Error("API 錯誤");
+    const err = await res.json().catch(() => ({}));
+    throw new Error(`HTTP ${res.status}: ${err.error?.message || '未知錯誤'}`);
   }
-
   const data = await res.json();
-  return data.result;
+  return data.content.map(b => b.type === "text" ? b.text : "").join("");
 }
-
-    const rawText = await res.text();
-    console.log("HTTP:", res.status, rawText.substring(0,300));
-    if (!res.ok) {
-      let em = `HTTP ${res.status}: `;
-      try { const e = JSON.parse(rawText); em += e.error?.message || rawText.substring(0,200); }
-      catch { em += rawText.substring(0,200); }
-      throw new Error(em);
-    }
-    let data;
-    try { data = JSON.parse(rawText); } catch(e) { throw new Error("解析失敗: " + rawText.substring(0,200)); }
-    return data.content.map(b => b.type === "text" ? b.text : "").join("");
-  }
 
   // ── 解析回應 ────────────────────────────────────────────────
   function parseResponse(text) {
