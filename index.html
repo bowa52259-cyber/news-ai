@@ -225,28 +225,23 @@ CONTENT_START
 CONTENT_END`;
 
   async function callClaude(messages) {
-  try {
-    const res = await fetch("/api/claude", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        messages: messages
-      })
-    });
 
-    const data = await res.json();
+  const res = await fetch("/api/claude", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      prompt: messages.map(m => m.content).join("\n")
+    })
+  });
 
-    if (!res.ok) {
-      throw new Error(data.error || "API 錯誤");
-    }
-
-    return data.result; // ← 後端回傳文字
-  } catch (err) {
-    console.error("API錯誤:", err);
-    throw err;
+  if (!res.ok) {
+    throw new Error("API 錯誤");
   }
+
+  const data = await res.json();
+  return data.result;
 }
 
     const rawText = await res.text();
