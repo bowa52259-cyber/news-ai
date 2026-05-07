@@ -1,0 +1,3176 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>財政部高雄國稅局 · 新聞稿AI生成系統</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<script>
+  if (typeof pdfjsLib !== 'undefined') {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  }
+</script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700;900&family=Noto+Sans+TC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  /* Core palette - deep navy + warm gold */
+  --navy:        #0d1b2e;
+  --navy-md:     #162338;
+  --navy-lt:     #1e3050;
+  --gold:        #c9a84c;
+  --gold-lt:     #f0d98a;
+  --gold-glow:   rgba(201,168,76,0.18);
+  --teal:        #1a6b6b;
+  --teal-lt:     #e6f4f4;
+
+  /* Surface */
+  --bg:          #f4f5f7;
+  --surface:     #ffffff;
+  --surface-2:   #f0f2f6;
+  --surface-3:   #e5e9f0;
+  --border:      #d2d8e4;
+  --border-md:   #b8c2d4;
+
+  /* Text */
+  --text:        #111827;
+  --text-md:     #374151;
+  --text-lt:     #6b7280;
+  --text-faint:  #9ca3af;
+
+  /* Semantic */
+  --success:     #166534;
+  --success-bg:  #dcfce7;
+  --error:       #991b1b;
+  --error-bg:    #fee2e2;
+  --warn:        #92400e;
+  --warn-bg:     #fef3c7;
+
+  /* Accent (blue-ish for interactive) */
+  --blue:        #1d4ed8;
+  --blue-lt:     #dbeafe;
+  --blue-glow:   rgba(29,78,216,0.14);
+
+  /* Step colors */
+  --step-active:   var(--navy);
+  --step-done:     var(--teal);
+  --step-pending:  #cbd5e1;
+
+  /* Layout */
+  --nav-h:       52px;
+  --sb-h:        36px;
+  --sidebar-w:   240px;
+  --radius:      10px;
+  --radius-sm:   6px;
+  --radius-xs:   4px;
+  --shadow-sm:   0 1px 3px rgba(0,0,0,0.08);
+  --shadow:      0 2px 8px rgba(0,0,0,0.10);
+  --shadow-lg:   0 6px 24px rgba(0,0,0,0.14);
+}
+
+/* ── RESET ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Noto Sans TC', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 13px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.6;
+}
+button { font-family: 'Noto Sans TC', sans-serif; cursor: pointer; }
+input, textarea, select { font-family: 'Noto Sans TC', sans-serif; }
+
+/* ════════════════════════════════════════
+   TOP NAV
+════════════════════════════════════════ */
+.top-bar {
+  background: var(--navy);
+  height: var(--nav-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  position: sticky;
+  top: 0;
+  z-index: 400;
+  border-bottom: 1px solid rgba(201,168,76,0.3);
+  flex-shrink: 0;
+}
+.tb-left { display: flex; align-items: center; gap: 14px; }
+.tb-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.tb-logo-icon {
+  width: 32px; height: 32px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-lt));
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(201,168,76,0.4);
+}
+.tb-org { font-size: 10px; color: rgba(255,255,255,0.45); letter-spacing: 0.5px; }
+.tb-title {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.3px;
+}
+.tb-divider { width: 1px; height: 20px; background: rgba(255,255,255,0.15); }
+.tb-right { display: flex; align-items: center; gap: 10px; }
+.api-pill {
+  display: flex; align-items: center; gap: 7px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 99px;
+  padding: 5px 14px 5px 10px;
+  font-size: 11px;
+  color: rgba(255,255,255,0.85);
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+  white-space: nowrap;
+}
+.api-pill:hover { background: rgba(255,255,255,0.13); border-color: rgba(201,168,76,0.4); }
+.s-dot { width: 7px; height: 7px; border-radius: 50%; background: #4b5563; flex-shrink: 0; transition: background 0.3s; }
+.s-dot.on { background: #22c55e; box-shadow: 0 0 6px #22c55e; }
+.model-chip {
+  font-size: 10px;
+  color: var(--gold);
+  background: rgba(201,168,76,0.12);
+  border: 1px solid rgba(201,168,76,0.25);
+  padding: 3px 9px;
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.3px;
+}
+
+/* ════════════════════════════════════════
+   STATUS BAR
+════════════════════════════════════════ */
+.status-bar {
+  background: var(--navy-md);
+  height: var(--sb-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  flex-shrink: 0;
+  border-bottom: 1px solid rgba(255,255,255,0.07);
+}
+.sb-stats { display: flex; align-items: center; gap: 0; }
+.sb-stat {
+  display: flex; align-items: center; gap: 6px;
+  padding: 0 14px;
+  border-right: 1px solid rgba(255,255,255,0.1);
+  height: var(--sb-h);
+}
+.sb-stat:first-child { padding-left: 4px; }
+.sb-stat-icon { font-size: 12px; opacity: 0.6; }
+.sb-stat-label { font-size: 10px; color: rgba(255,255,255,0.4); }
+.sb-stat-val { font-size: 11px; color: var(--gold); font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+.sb-actions { display: flex; align-items: center; gap: 8px; }
+.sb-action-btn {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: var(--radius-xs);
+  color: rgba(255,255,255,0.85);
+  font-size: 11px;
+  padding: 4px 12px;
+  transition: all 0.15s;
+}
+.sb-action-btn:hover { background: rgba(201,168,76,0.2); border-color: rgba(201,168,76,0.4); color: var(--gold-lt); }
+.sb-action-btn.primary {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--navy);
+  font-weight: 700;
+}
+.sb-action-btn.primary:hover { background: var(--gold-lt); }
+
+/* ════════════════════════════════════════
+   LAYOUT  ── 關鍵：只用 min-height:0，不用 max-height
+════════════════════════════════════════ */
+.app-body {
+  display: flex;
+  flex: 1;
+  /* 固定總高度，不讓 body 超出視窗 */
+  height: calc(100vh - var(--nav-h) - var(--sb-h));
+  overflow: hidden;          /* 裁剪任何溢出 */
+  isolation: isolate;        /* 捲動事件不傳到 body */
+}
+
+/* ════════════════════════════════════════
+   LEFT STEP SIDEBAR
+════════════════════════════════════════ */
+.step-sidebar {
+  width: var(--sidebar-w);
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  overflow: hidden;          /* 自己不捲，由 .step-list 負責 */
+  min-height: 0;
+}
+.sidebar-hd {
+  padding: 14px 16px 12px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-2);
+  flex-shrink: 0;
+}
+.sidebar-hd-title {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-lt);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.sidebar-hd-title::before {
+  content: '';
+  width: 3px; height: 14px;
+  background: var(--gold);
+  border-radius: 2px;
+  display: block;
+}
+.sidebar-hd-sub { font-size: 10px; color: var(--text-faint); margin-top: 4px; }
+
+.step-list { flex: 1; overflow-y: auto; padding: 8px 10px; display: flex; flex-direction: column; gap: 2px; }
+.step-list::-webkit-scrollbar { width: 3px; }
+.step-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+.step-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 9px 10px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 0.15s;
+  position: relative;
+  border: 1.5px solid transparent;
+}
+.step-row:hover { background: var(--surface-2); }
+.step-row.active {
+  background: linear-gradient(135deg, rgba(13,27,46,0.05), rgba(201,168,76,0.08));
+  border-color: rgba(201,168,76,0.35);
+}
+.step-row.done { opacity: 0.75; }
+
+.step-num-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  flex-shrink: 0;
+}
+.step-num {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700;
+  border: 2px solid var(--step-pending);
+  color: var(--text-faint);
+  background: var(--surface);
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.step-row.active .step-num {
+  border-color: var(--gold);
+  background: var(--navy);
+  color: var(--gold);
+  box-shadow: 0 0 0 3px var(--gold-glow);
+}
+.step-row.done .step-num {
+  border-color: var(--teal);
+  background: var(--teal);
+  color: #fff;
+  font-size: 13px;
+}
+.step-vline {
+  width: 1px;
+  flex: 1;
+  min-height: 14px;
+  background: var(--border);
+  margin-top: 2px;
+}
+
+.step-info { flex: 1; min-width: 0; padding-top: 2px; }
+.step-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-md);
+  line-height: 1.4;
+  transition: color 0.15s;
+}
+.step-row.active .step-name { color: var(--navy); }
+.step-desc { font-size: 10px; color: var(--text-faint); margin-top: 2px; line-height: 1.4; }
+.step-row.active .step-desc { color: var(--text-lt); }
+
+.step-badge {
+  font-size: 9px;
+  padding: 2px 7px;
+  border-radius: 99px;
+  font-weight: 700;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.step-badge.ok { background: var(--success-bg); color: var(--success); }
+.step-badge.warn { background: var(--warn-bg); color: var(--warn); }
+
+/* Sidebar footer */
+.sidebar-footer { padding: 12px; border-top: 1px solid var(--border); flex-shrink: 0; display: flex; flex-direction: column; gap: 7px; }
+.btn-generate {
+  width: 100%;
+  background: linear-gradient(135deg, var(--navy), var(--navy-lt));
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  font-family: 'Noto Serif TC', serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.btn-generate::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--gold-glow), transparent);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.btn-generate:hover::before { opacity: 1; }
+.btn-generate:hover { box-shadow: 0 4px 16px rgba(13,27,46,0.4), 0 0 0 1px rgba(201,168,76,0.3); }
+.btn-generate:disabled { background: #9ca3af; cursor: not-allowed; }
+.btn-generate .gen-icon { font-size: 14px; }
+.gen-spin {
+  width: 14px; height: 14px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  display: none;
+}
+.btn-generate.loading .gen-spin { display: block; }
+.btn-generate.loading .gen-icon { display: none; }
+.btn-generate.loading .gen-bt { opacity: 0.7; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.btn-preview-ref {
+  width: 100%;
+  background: var(--surface);
+  color: var(--navy);
+  border: 1.5px dashed var(--border-md);
+  border-radius: var(--radius-sm);
+  padding: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  display: flex; align-items: center; justify-content: center; gap: 5px;
+  transition: all 0.15s;
+}
+.btn-preview-ref:hover { border-color: var(--gold); color: var(--warn); background: var(--warn-bg); }
+
+/* ════════════════════════════════════════
+   CONTENT AREA
+════════════════════════════════════════ */
+/* 每一層都是 flex column，flex:1 + min-height:0 讓子層可以縮小並產生捲軸 */
+.content-area {
+  flex: 1;
+  min-height: 0;        /* ★ 讓 flex 子元素可縮小 */
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.step-panels {
+  flex: 1;
+  min-height: 0;        /* ★ */
+  display: flex;
+  overflow: hidden;
+}
+.step-panel {
+  display: none;
+  flex: 1;
+  min-height: 0;        /* ★ */
+  min-width: 0;
+  overflow: hidden;
+}
+.step-panel.active { display: flex; }
+
+/* ── SPLIT LAYOUT ── */
+.panel-split {
+  display: flex;
+  flex: 1;
+  min-height: 0;        /* ★ */
+  min-width: 0;
+  overflow: hidden;
+}
+.split-left {
+  width: 40%;
+  min-width: 320px;
+  flex-shrink: 0;
+  min-height: 0;        /* ★ */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+}
+.split-right {
+  flex: 1;
+  min-height: 0;        /* ★ */
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+/* Panel header */
+.panel-hd {
+  padding: 13px 18px 11px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-2);
+  flex-shrink: 0;
+}
+.panel-hd-row { display: flex; align-items: center; gap: 10px; }
+.panel-step-badge {
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: var(--navy);
+  color: var(--gold);
+  font-size: 11px;
+  font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.panel-hd-title { font-size: 13px; font-weight: 700; color: var(--navy); }
+.panel-hd-desc { font-size: 10px; color: var(--text-lt); margin-top: 3px; margin-left: 34px; }
+
+/* Panel scroll area */
+.panel-scroll {
+  flex: 1;
+  min-height: 0;        /* ★ */
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.panel-scroll::-webkit-scrollbar { width: 4px; }
+.panel-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+/* ── FORM ELEMENTS ── */
+.field-group { display: flex; flex-direction: column; gap: 5px; }
+.field-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-md);
+  letter-spacing: 0.4px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.field-req { color: var(--error); font-size: 12px; }
+.field-hint { font-size: 10px; color: var(--text-faint); font-weight: 400; }
+
+textarea, input[type=text] {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 13px;
+  color: var(--text);
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 9px 12px;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+textarea:focus, input[type=text]:focus {
+  border-color: var(--navy);
+  box-shadow: 0 0 0 3px var(--blue-glow);
+  background: #fff;
+}
+textarea { resize: vertical; line-height: 1.7; }
+
+/* Upload zone */
+.upload-zone {
+  border: 2px dashed var(--border-md);
+  border-radius: var(--radius);
+  padding: 16px 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: var(--bg);
+  position: relative;
+}
+.upload-zone:hover, .upload-zone.dov {
+  border-color: var(--navy);
+  background: var(--blue-lt);
+}
+.upload-zone input[type=file] {
+  position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+}
+.up-icon { font-size: 24px; margin-bottom: 5px; }
+.up-text { font-size: 11px; color: var(--text-lt); line-height: 1.6; }
+.up-text strong { color: var(--navy); }
+
+/* Src tabs */
+.src-box { border: 1.5px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.src-tabs { display: flex; border-bottom: 1.5px solid var(--border); background: var(--surface-2); }
+.src-tab {
+  flex: 1; padding: 8px 6px;
+  font-size: 11px; font-weight: 700;
+  color: var(--text-faint); cursor: pointer;
+  text-align: center; border: none; background: none;
+  transition: all 0.15s;
+  border-bottom: 2px solid transparent;
+}
+.src-tab.active { color: var(--navy); border-bottom-color: var(--gold); background: var(--surface); }
+.src-tab:hover:not(.active) { color: var(--text-md); background: var(--surface-3); }
+.src-pane { display: none; padding: 12px; flex-direction: column; gap: 8px; }
+.src-pane.active { display: flex; }
+.src-url-row { display: flex; gap: 6px; }
+.src-url-inp {
+  flex: 1; font-size: 12px; padding: 7px 10px;
+  border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+  outline: none; background: var(--bg); color: var(--text);
+  transition: border-color 0.2s;
+}
+.src-url-inp:focus { border-color: var(--navy); }
+.src-url-btn {
+  padding: 7px 12px; background: var(--navy); color: #fff;
+  border: none; border-radius: var(--radius-sm); font-size: 11px;
+  white-space: nowrap; transition: background 0.15s;
+}
+.src-url-btn:hover { background: var(--navy-lt); }
+.src-list { display: flex; flex-direction: column; gap: 4px; max-height: 110px; overflow-y: auto; }
+.src-item {
+  display: flex; align-items: center; gap: 7px;
+  background: #fff; border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 5px 9px;
+  font-size: 11px; color: var(--text-md);
+}
+.src-item-name { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.src-item-rm { margin-left: auto; cursor: pointer; color: var(--text-faint); font-size: 15px; flex-shrink: 0; }
+.src-item-rm:hover { color: var(--error); }
+
+/* Info / alert boxes */
+.info-box {
+  border-radius: var(--radius-sm);
+  padding: 10px 13px;
+  font-size: 12px;
+  line-height: 1.6;
+  border: 1px solid;
+}
+.info-box.blue  { background: var(--blue-lt);    border-color: #93c5fd; color: #1e3a8a; }
+.info-box.green { background: var(--success-bg); border-color: #86efac; color: var(--success); }
+.info-box.warn  { background: var(--warn-bg);    border-color: #fcd34d; color: var(--warn); }
+
+/* Step nav buttons */
+.step-nav-btns { display: flex; gap: 8px; margin-top: 4px; }
+.btn-prev, .btn-next {
+  flex: 1; padding: 9px;
+  border-radius: var(--radius-sm);
+  font-size: 12px; font-weight: 600;
+  transition: all 0.15s;
+}
+.btn-prev {
+  background: var(--surface); color: var(--text-lt);
+  border: 1.5px solid var(--border);
+}
+.btn-prev:hover { background: var(--surface-2); color: var(--text-md); }
+.btn-next {
+  flex: 2; background: var(--blue); color: #fff; border: none;
+}
+.btn-next:hover { background: #1e40af; box-shadow: var(--shadow); }
+.btn-next.gold { background: linear-gradient(135deg, var(--navy), var(--navy-lt)); }
+.btn-next.gold:hover { box-shadow: 0 4px 14px rgba(13,27,46,0.3), 0 0 0 1px rgba(201,168,76,0.3); }
+
+/* ════════════════════════════════════════
+   STEP 1 — RIGHT PANEL (guide cards)
+════════════════════════════════════════ */
+.guide-panel-hd {
+  padding: 13px 18px 11px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-2);
+  flex-shrink: 0;
+}
+.guide-panel-title { font-size: 13px; font-weight: 700; color: var(--navy); }
+.guide-panel-sub { font-size: 10px; color: var(--text-lt); margin-top: 3px; }
+.guide-scroll { flex: 1; overflow-y: auto; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
+.guide-scroll::-webkit-scrollbar { width: 4px; }
+.guide-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+.type-card {
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 11px 14px;
+  background: var(--surface);
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.type-card:hover { border-color: var(--border-md); box-shadow: var(--shadow-sm); }
+.type-badge {
+  min-width: 24px; height: 24px;
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700; color: #fff;
+  flex-shrink: 0;
+}
+.type-card-body { flex: 1; min-width: 0; }
+.type-card-name { font-size: 12px; font-weight: 700; color: var(--text); line-height: 1.3; }
+.type-card-desc { font-size: 11px; color: var(--text-lt); margin-top: 3px; line-height: 1.4; }
+.type-card-eg { font-size: 10px; color: var(--text-faint); margin-top: 4px; font-style: italic; }
+
+.struct-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+.struct-card-hd { padding: 8px 13px; background: var(--navy); color: var(--gold-lt); font-size: 11px; font-weight: 700; }
+.struct-list { padding: 8px 13px; display: flex; flex-direction: column; gap: 0; }
+.struct-item {
+  display: flex; align-items: baseline; gap: 8px;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--surface-3);
+  font-size: 11px;
+}
+.struct-item:last-child { border-bottom: none; }
+.struct-num {
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  font-size: 9px; font-weight: 700;
+  color: var(--text-lt);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.struct-text { color: var(--text-md); flex: 1; }
+.struct-text em { font-style: normal; color: var(--text-faint); }
+
+/* ════════════════════════════════════════
+   STEP 2 — KB
+════════════════════════════════════════ */
+.kb-right-hd {
+  padding: 11px 16px 10px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.kb-right-title { font-size: 13px; font-weight: 700; color: var(--navy); display: flex; align-items: center; gap: 8px; }
+.kb-badge {
+  font-size: 9px; padding: 2px 8px;
+  border-radius: 99px; font-weight: 700; color: #fff;
+  background: var(--text-faint);
+}
+.kb-badge.ok { background: var(--success); }
+
+.kb-search-row {
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-2);
+  display: flex; gap: 6px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.kb-si {
+  flex: 1; padding: 8px 12px;
+  border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+  font-size: 12px; background: #fff; outline: none;
+  transition: border-color 0.2s;
+}
+.kb-si:focus { border-color: var(--navy); }
+.kb-sbtn {
+  padding: 8px 14px;
+  background: var(--navy); color: #fff;
+  border: none; border-radius: var(--radius-sm);
+  font-size: 12px; transition: background 0.15s;
+}
+.kb-sbtn:hover { background: var(--navy-lt); }
+.kb-sbtn.ghost {
+  background: var(--surface-3); color: var(--text-md);
+  border: 1px solid var(--border);
+}
+.kb-sbtn.ghost:hover { background: var(--surface); }
+.kb-sbtn.accent { background: var(--teal); }
+.kb-sbtn.accent:hover { background: #145555; }
+
+.kb-filter-row {
+  padding: 8px 16px;
+  border-bottom: 1px solid var(--border);
+  background: #fafbfc;
+  display: flex; flex-wrap: wrap; gap: 5px; align-items: center;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.kb-filter-label { font-size: 10px; color: var(--text-faint); width: 100%; }
+
+.kb-body {
+  flex: 1;
+  min-height: 0;        /* ★ 允許縮小，捲軸才會出現 */
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.kb-body::-webkit-scrollbar { width: 5px; }
+.kb-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+/* KB groups */
+.kb-group { border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; margin-bottom: 6px; }
+.kb-group-hd {
+  display: flex; align-items: center; gap: 8px;
+  padding: 9px 12px;
+  background: var(--surface-2);
+  cursor: pointer;
+  transition: background 0.15s;
+  user-select: none;
+}
+.kb-group-hd:hover { background: var(--surface-3); }
+.kb-group-arrow { font-size: 9px; color: var(--text-faint); flex-shrink: 0; transition: transform 0.15s; }
+.kb-group-arrow.open { transform: rotate(90deg); }
+.kb-group-name { font-size: 12px; font-weight: 700; color: var(--text-md); flex: 1; }
+.kb-group-cnt {
+  font-size: 10px; color: var(--text-faint);
+  background: var(--surface-3);
+  padding: 1px 8px; border-radius: 99px;
+}
+.kb-group-body { padding: 5px 8px 7px; display: flex; flex-direction: column; gap: 4px; }
+
+/* KB item row */
+.kb-item {
+  display: flex; align-items: flex-start; gap: 8px;
+  padding: 8px 10px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.kb-item:hover { border-color: var(--navy); background: var(--blue-lt); }
+.kb-item.sel { border-color: var(--teal); background: var(--teal-lt); }
+.kb-item-info { flex: 1; min-width: 0; }
+.kb-item-title { font-size: 12px; font-weight: 700; color: var(--text); line-height: 1.4; }
+.kb-item-tags { display: flex; gap: 4px; margin-top: 4px; flex-wrap: wrap; }
+.kb-tag {
+  font-size: 10px; padding: 1px 7px;
+  border-radius: 99px;
+  background: var(--surface-3);
+  color: var(--text-lt);
+}
+.kb-tag.cat { background: var(--blue-lt); color: var(--blue); }
+.kb-item-btn {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  border: 2px solid var(--navy);
+  background: var(--blue-lt);
+  color: var(--navy);
+  font-size: 16px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+  line-height: 1;
+  transition: all 0.15s;
+}
+.kb-item.sel .kb-item-btn {
+  border-color: var(--teal);
+  background: var(--teal);
+  color: #fff;
+  font-size: 13px;
+}
+.kb-empty {
+  font-size: 12px; color: var(--text-faint);
+  text-align: center; padding: 24px;
+}
+
+/* KB chosen bar */
+.kb-chosen-bar {
+  border-top: 2px solid var(--teal);
+  background: var(--teal-lt);
+  padding: 9px 14px;
+  flex-shrink: 0;
+  display: none;
+}
+.kb-chosen-bar.show { display: block; }
+.kb-chosen-bar-hd {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 7px;
+}
+.kb-chosen-title {
+  font-size: 11px; font-weight: 700; color: var(--teal);
+  display: flex; align-items: center; gap: 6px;
+}
+.kb-chosen-cnt {
+  font-size: 10px; padding: 1px 8px;
+  background: var(--teal); color: #fff;
+  border-radius: 99px; font-weight: 700;
+}
+.kb-clr-btn {
+  font-size: 10px; padding: 2px 9px;
+  border: 1px solid var(--teal); border-radius: 4px;
+  background: transparent; color: var(--teal);
+  transition: all 0.15s;
+}
+.kb-clr-btn:hover { background: var(--teal); color: #fff; }
+.kb-chips { display: flex; flex-wrap: wrap; gap: 5px; }
+.kb-chip {
+  display: flex; align-items: center; gap: 5px;
+  background: #fff; border: 1px solid var(--teal);
+  border-radius: 99px; padding: 3px 10px 3px 12px;
+  font-size: 11px; color: var(--teal);
+  max-width: 160px;
+}
+.kb-chip span { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.kb-chip button { border: none; background: none; color: #9ca3af; font-size: 12px; line-height: 1; padding: 0; flex-shrink: 0; }
+.kb-chip button:hover { color: var(--error); }
+
+/* JSON zone */
+.json-zone {
+  border: 2px dashed var(--border-md);
+  border-radius: var(--radius);
+  padding: 22px 14px;
+  text-align: center;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: var(--bg);
+  margin: 12px;
+}
+.json-zone:hover, .json-zone.dov { border-color: var(--navy); background: var(--blue-lt); }
+.json-zone input[type=file] { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+
+/* ════════════════════════════════════════
+   STEP 3 — SRC LIST (right panel)
+════════════════════════════════════════ */
+.src-preview-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 10px 13px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition: border-color 0.15s;
+}
+.src-preview-item:hover { border-color: var(--border-md); }
+.src-preview-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+.src-preview-info { flex: 1; min-width: 0; }
+.src-preview-name { font-size: 12px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.src-preview-meta { font-size: 10px; color: var(--text-faint); margin-top: 3px; }
+.src-preview-status { font-size: 10px; padding: 2px 8px; border-radius: 99px; flex-shrink: 0; margin-top: 2px; }
+.src-preview-status.ok { background: var(--success-bg); color: var(--success); }
+.src-preview-status.err { background: var(--error-bg); color: var(--error); }
+
+/* ════════════════════════════════════════
+   STEP 4 — TEMPLATE SELECTOR
+════════════════════════════════════════ */
+.tpl-auto-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px;
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.tpl-auto-label { font-size: 12px; color: var(--text-md); }
+.tpl-auto-label strong { color: var(--navy); }
+
+/* Toggle */
+.tpl-toggle { position: relative; width: 42px; height: 24px; flex-shrink: 0; }
+.tpl-toggle input { opacity: 0; width: 100%; height: 100%; position: absolute; cursor: pointer; margin: 0; z-index: 2; }
+.tpl-track { position: absolute; inset: 0; border-radius: 12px; background: var(--border); transition: background 0.2s; }
+.tpl-toggle input:checked ~ .tpl-track { background: var(--navy); }
+.tpl-thumb { position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; transition: transform 0.2s; box-shadow: 0 1px 4px rgba(0,0,0,0.2); pointer-events: none; }
+.tpl-toggle input:checked ~ .tpl-track ~ .tpl-thumb { transform: translateX(18px); }
+
+.tpl-auto-hint {
+  margin: 8px 16px;
+  padding: 9px 13px;
+  background: var(--success-bg);
+  border: 1px solid #86efac;
+  border-radius: var(--radius-sm);
+  font-size: 11px;
+  color: var(--success);
+  line-height: 1.5;
+  display: none;
+}
+.tpl-auto-hint.show { display: block; }
+
+.tpl-grid-wrap { flex: 1; min-height: 0; overflow-y: auto; padding: 14px 14px 0; }
+.tpl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding-bottom: 14px; }
+
+.tpl-card {
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px;
+  cursor: pointer;
+  background: #fff;
+  transition: all 0.15s;
+  display: flex; flex-direction: column; gap: 7px;
+  position: relative;
+  overflow: hidden;
+}
+.tpl-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 4px; height: 100%;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.tpl-card:hover { border-color: var(--border-md); box-shadow: var(--shadow); transform: translateY(-1px); }
+.tpl-card.active { border-color: var(--navy); box-shadow: 0 0 0 3px var(--blue-glow); }
+.tpl-card.active::before { opacity: 1; }
+.tpl-card.disabled { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
+
+.tpl-badge {
+  font-size: 9px; font-weight: 700;
+  padding: 3px 9px; border-radius: 5px; color: #fff;
+  align-self: flex-start; letter-spacing: 0.5px;
+}
+.tpl-badge-A { background: #1a73e8; } .tpl-card:nth-child(1)::before { background: #1a73e8; }
+.tpl-badge-B { background: #c0392b; } .tpl-card:nth-child(2)::before { background: #c0392b; }
+.tpl-badge-C { background: #27ae60; } .tpl-card:nth-child(3)::before { background: #27ae60; }
+.tpl-badge-D { background: #d97706; } .tpl-card:nth-child(4)::before { background: #d97706; }
+.tpl-badge-E { background: #7c3aed; }
+
+.tpl-card-name { font-size: 13px; font-weight: 700; color: var(--text); }
+.tpl-card-desc { font-size: 11px; color: var(--text-lt); line-height: 1.4; }
+.tpl-card-actions { display: flex; gap: 5px; margin-top: 2px; }
+.tpl-card-btn {
+  flex: 1; padding: 5px 8px;
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  background: var(--surface-2); color: var(--text-md);
+  font-size: 11px;
+  transition: all 0.15s;
+}
+.tpl-card-btn:hover { border-color: var(--navy); color: var(--navy); background: var(--blue-lt); }
+.tpl-card-btn.select-btn { background: var(--navy); color: #fff; border-color: var(--navy); }
+.tpl-card-btn.select-btn:hover { background: var(--navy-lt); }
+
+/* Right panel: tpl details */
+.tpl-detail-pane {
+  flex: 1;
+  min-height: 0;        /* ★ */
+  overflow-y: auto;
+  padding: 14px 18px;
+}
+.tpl-detail-pane::-webkit-scrollbar { width: 4px; }
+.tpl-detail-pane::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+.tpl-detail-placeholder {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  height: 100%;
+  color: var(--text-faint);
+  text-align: center;
+  gap: 10px;
+}
+.tpl-detail-icon { font-size: 40px; opacity: 0.4; }
+
+/* Modal */
+.tpl-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9999; display: none; align-items: center; justify-content: center; padding: 20px; }
+.tpl-modal-overlay.open { display: flex; }
+.tpl-modal { background: var(--bg); border-radius: var(--radius); width: 100%; max-width: 560px; max-height: 88vh; overflow: hidden; display: flex; flex-direction: column; box-shadow: var(--shadow-lg); }
+.tpl-modal-hd { padding: 16px 20px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border); flex-shrink: 0; background: var(--surface); }
+.tpl-modal-badge { font-size: 11px; font-weight: 700; padding: 4px 12px; border-radius: 6px; color: #fff; }
+.tpl-modal-name { font-size: 15px; font-weight: 700; color: var(--text); }
+.tpl-modal-sub { font-size: 11px; color: var(--text-faint); margin-top: 2px; }
+.tpl-modal-close { width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--border); background: var(--bg); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--text-lt); margin-left: auto; }
+.tpl-modal-body { overflow-y: auto; padding: 18px 20px; display: flex; flex-direction: column; gap: 16px; }
+.tpl-modal-section-label { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; color: var(--text-faint); text-transform: uppercase; margin-bottom: 8px; }
+.tpl-modal-steps { display: flex; flex-direction: column; gap: 6px; }
+.tpl-modal-step { display: flex; gap: 10px; }
+.tpl-modal-step-num { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #fff; flex-shrink: 0; margin-top: 1px; }
+.tpl-modal-step-body { flex: 1; background: var(--surface-2); border-radius: var(--radius-sm); padding: 8px 11px; }
+.tpl-modal-step-title { font-size: 12px; font-weight: 700; color: var(--text); }
+.tpl-modal-step-formula { font-size: 11px; color: var(--text-lt); margin-top: 4px; line-height: 1.6; padding: 4px 9px; background: #fff; border-radius: 4px; border-left: 2px solid var(--border); }
+.tpl-modal-examples { display: flex; flex-direction: column; gap: 7px; }
+.tpl-modal-ex { padding: 8px 11px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); }
+.tpl-modal-ex-tag { font-size: 10px; padding: 2px 7px; background: var(--surface-3); color: var(--text-lt); border-radius: 4px; display: inline-block; margin-bottom: 4px; }
+.tpl-modal-ex-title { font-size: 12px; font-weight: 700; color: var(--text); }
+.tpl-modal-ex-desc { font-size: 11px; color: var(--text-faint); margin-top: 2px; }
+.tpl-modal-tips { display: flex; flex-direction: column; gap: 5px; }
+.tpl-modal-tip { font-size: 11px; color: var(--text-md); display: flex; gap: 6px; padding: 4px 0; border-top: 1px solid var(--border); }
+.tpl-modal-tip:first-child { border-top: none; }
+.tpl-modal-footer { padding: 12px 20px; border-top: 1px solid var(--border); flex-shrink: 0; background: var(--surface); }
+.tpl-modal-use-btn { width: 100%; padding: 10px; border: none; border-radius: var(--radius-sm); color: #fff; font-size: 13px; font-weight: 700; cursor: pointer; }
+
+/* ════════════════════════════════════════
+   STEP 5 — OUTPUT
+════════════════════════════════════════ */
+.output-wrapper { flex: 1; min-height: 0; display: flex; overflow: hidden; }
+.output-left { width: 42%; min-height: 0; border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; background: var(--surface); }
+.output-right { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; background: var(--bg); }
+
+/* Title section */
+.title-area {
+  border-bottom: 1px solid var(--border);
+  padding: 13px 16px 12px;
+  flex-shrink: 0;
+  position: relative;
+}
+.section-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 9px;
+}
+.section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+.title-options { display: flex; flex-direction: column; gap: 5px; }
+.title-opt {
+  display: flex; align-items: flex-start; gap: 9px;
+  padding: 9px 11px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.15s;
+  background: var(--bg);
+}
+.title-opt:hover { border-color: var(--border-md); background: var(--surface-2); }
+.title-opt.sel { border-color: var(--navy); background: var(--blue-lt); }
+.title-num {
+  min-width: 22px; height: 22px;
+  border-radius: 50%;
+  background: var(--surface-3);
+  color: var(--text-lt);
+  font-size: 10px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+.title-opt.sel .title-num { background: var(--navy); color: var(--gold); }
+.title-txt {
+  font-family: 'Noto Serif TC', serif;
+  font-size: 14px; font-weight: 600;
+  color: var(--text);
+  line-height: 1.55;
+  flex: 1;
+}
+.title-opt.sel .title-txt { color: var(--navy); }
+.t-empty { color: var(--text-faint); font-size: 12px; padding: 14px; text-align: center; font-style: italic; }
+
+/* Title OV */
+.ov { position: absolute; inset: 0; background: rgba(255,255,255,0.9); backdrop-filter: blur(3px); display: none; flex-direction: column; align-items: center; justify-content: center; gap: 10px; z-index: 10; }
+.ov.show { display: flex; }
+.ov-spin { width: 28px; height: 28px; border: 3px solid var(--border); border-top-color: var(--navy); border-radius: 50%; animation: spin 0.8s linear infinite; }
+.ov-msg { font-size: 12px; color: var(--text-lt); }
+
+/* Title quick edit */
+.title-edit-bar {
+  padding: 9px 16px 10px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-2);
+  display: flex; flex-direction: column; gap: 7px;
+  flex-shrink: 0;
+}
+.qbtns-row { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
+.qlabel { font-size: 10px; color: var(--text-faint); white-space: nowrap; }
+.qbtn {
+  padding: 4px 12px;
+  border-radius: 99px;
+  border: 1px solid var(--border);
+  background: #fff;
+  font-size: 11px; color: var(--text-md);
+  transition: all 0.13s; white-space: nowrap;
+}
+.qbtn:hover { border-color: var(--navy); color: var(--navy); background: var(--blue-lt); }
+.title-input-row { display: flex; gap: 6px; }
+.title-inp {
+  flex: 1; font-size: 12px; padding: 7px 10px;
+  border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+  outline: none; background: #fff; color: var(--text);
+}
+.title-inp:focus { border-color: var(--navy); }
+.title-inp::placeholder { color: var(--text-faint); font-size: 11px; }
+.title-send-btn {
+  width: 32px; height: 32px;
+  border: none; border-radius: var(--radius-sm);
+  background: var(--navy); color: #fff;
+  font-size: 14px; display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; transition: background 0.15s;
+}
+.title-send-btn:hover:not(:disabled) { background: var(--navy-lt); }
+.title-send-btn:disabled { background: var(--text-faint); cursor: not-allowed; }
+
+/* Chat section */
+.chat-area {
+  padding: 9px 16px 12px;
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+  display: flex; flex-direction: column; gap: 7px;
+  flex-shrink: 0;
+}
+.chat-hist {
+  max-height: 80px; overflow-y: auto;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.chat-msg { font-size: 12px; padding: 5px 10px; border-radius: var(--radius-sm); line-height: 1.5; max-width: 90%; }
+.chat-msg.user { background: var(--blue-lt); color: var(--blue); align-self: flex-end; }
+.chat-msg.ai { background: var(--surface-2); color: var(--text-md); align-self: flex-start; }
+.chat-row { display: flex; gap: 7px; align-items: flex-end; }
+.chat-inp {
+  flex: 1; font-family: 'Noto Sans TC', sans-serif; font-size: 13px;
+  padding: 8px 11px; border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+  outline: none; resize: none; background: var(--bg); color: var(--text);
+  transition: border-color 0.2s;
+}
+.chat-inp:focus { border-color: var(--navy); background: #fff; }
+.send-btn {
+  width: 36px; height: 36px; border: none; border-radius: var(--radius-sm);
+  background: var(--navy); color: #fff; font-size: 15px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  transition: background 0.15s;
+}
+.send-btn:hover:not(:disabled) { background: var(--navy-lt); }
+.send-btn:disabled { background: var(--text-faint); cursor: not-allowed; }
+
+/* Content display */
+.content-wrapper {
+  flex: 1; min-height: 0; display: flex; flex-direction: column;
+  overflow: hidden; padding: 13px 16px 12px; gap: 9px;
+}
+.c-header { flex-shrink: 0; }
+.c-box {
+  flex: 1; min-height: 0; display: flex; flex-direction: column;
+  overflow: hidden; background: var(--surface);
+  border: 1.5px solid var(--border); border-radius: var(--radius);
+  box-shadow: var(--shadow-sm); position: relative;
+}
+.c-toolbar {
+  display: flex; align-items: center; gap: 5px;
+  padding: 7px 12px; border-bottom: 1px solid var(--border);
+  background: var(--surface-2); flex-shrink: 0;
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+.tb-btn {
+  padding: 4px 11px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border); background: var(--surface);
+  font-size: 11px; color: var(--text-md);
+  transition: all 0.13s; white-space: nowrap;
+}
+.tb-btn:hover { background: var(--blue-lt); border-color: var(--navy); color: var(--navy); }
+.tb-sep { width: 1px; height: 14px; background: var(--border); margin: 0 3px; }
+.tb-r { margin-left: auto; }
+.wc-badge { font-size: 11px; color: var(--text-faint); font-family: 'JetBrains Mono', monospace; }
+.c-ov { position: absolute; inset: 0; background: rgba(255,255,255,0.9); backdrop-filter: blur(3px); display: none; flex-direction: column; align-items: center; justify-content: center; gap: 12px; z-index: 10; border-radius: var(--radius); }
+.c-ov.show { display: flex; }
+.c-ov-spin { width: 36px; height: 36px; border: 3px solid var(--border); border-top-color: var(--navy); border-radius: 50%; animation: spin 0.8s linear infinite; }
+.c-ov-msg { font-size: 13px; color: var(--text-md); font-weight: 600; }
+.c-display {
+  flex: 1; min-height: 0; overflow-y: auto; padding: 16px 20px;
+  font-family: 'Noto Serif TC', serif;
+  font-size: 15px; line-height: 2.1; color: var(--text);
+  white-space: pre-wrap; outline: none;
+}
+.c-display::-webkit-scrollbar { width: 5px; }
+.c-display::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+.c-display.editable { cursor: text; background: #fffef8; }
+.ph { color: var(--text-faint); font-style: italic; font-size: 13px; line-height: 2; }
+.typing::after { content: '▋'; animation: blink 0.6s step-end infinite; color: var(--navy); font-size: 12px; }
+@keyframes blink { 50% { opacity: 0; } }
+
+/* ════════════════════════════════════════
+   API MODAL
+════════════════════════════════════════ */
+.modal-bg {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.55); backdrop-filter: blur(5px);
+  z-index: 1000; display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity 0.22s;
+}
+.modal-bg.show { opacity: 1; pointer-events: all; }
+.modal-box {
+  background: var(--surface); border-radius: 14px;
+  width: 500px; max-width: 95vw;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.3);
+  overflow: hidden;
+  transform: translateY(20px); transition: transform 0.22s;
+}
+.modal-bg.show .modal-box { transform: translateY(0); }
+.m-hd {
+  background: linear-gradient(135deg, var(--navy), var(--navy-lt));
+  padding: 22px 26px 18px; color: #fff;
+  border-bottom: 1px solid rgba(201,168,76,0.2);
+}
+.m-hd-icon { font-size: 28px; margin-bottom: 8px; }
+.m-hd h2 { font-family: 'Noto Serif TC', serif; font-size: 17px; font-weight: 700; }
+.m-hd p { font-size: 11px; margin-top: 5px; opacity: 0.75; line-height: 1.6; }
+.m-body { padding: 22px 26px; display: flex; flex-direction: column; gap: 16px; }
+.m-label { display: block; font-size: 11px; font-weight: 700; color: var(--text-lt); margin-bottom: 7px; letter-spacing: 0.5px; text-transform: uppercase; }
+.m-inp-wrap { position: relative; }
+.m-inp {
+  width: 100%; font-family: 'JetBrains Mono', monospace; font-size: 13px;
+  padding: 10px 38px 10px 12px; border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); outline: none; background: var(--bg); color: var(--text);
+}
+.m-inp:focus { border-color: var(--navy); box-shadow: 0 0 0 3px var(--blue-glow); }
+.m-eye { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 14px; color: var(--text-faint); }
+.m-hint { font-size: 11px; color: var(--text-faint); margin-top: 5px; line-height: 1.6; }
+.m-hint a { color: var(--blue); text-decoration: none; }
+.m-sel { width: 100%; font-family: 'Noto Sans TC', sans-serif; font-size: 13px; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); outline: none; background: var(--bg); color: var(--text); cursor: pointer; }
+.m-sel-note { margin-top: 7px; font-size: 11px; color: var(--text-faint); line-height: 1.6; padding: 8px 10px; background: var(--surface-2); border-radius: var(--radius-sm); border: 1px solid var(--border); }
+.m-foot { display: flex; gap: 9px; }
+.btn-cancel { flex: 1; padding: 10px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); color: var(--text-lt); font-size: 13px; cursor: pointer; }
+.btn-cancel:hover { background: var(--surface-2); }
+.btn-save { flex: 2; padding: 10px; border: none; border-radius: var(--radius-sm); background: linear-gradient(135deg, var(--navy), var(--navy-lt)); color: #fff; font-size: 13px; font-weight: 700; cursor: pointer; }
+.btn-save:hover { opacity: 0.88; }
+
+/* KB Preview modal */
+.kb-prev-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 1100; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.22s; }
+.kb-prev-bg.show { opacity: 1; pointer-events: all; }
+.kb-prev-box { background: var(--surface); border-radius: 14px; width: 700px; max-width: 95vw; max-height: 82vh; box-shadow: 0 24px 64px rgba(0,0,0,0.3); display: flex; flex-direction: column; overflow: hidden; transform: translateY(16px); transition: transform 0.22s; }
+.kb-prev-bg.show .kb-prev-box { transform: translateY(0); }
+.kb-prev-hd { padding: 16px 20px 14px; border-bottom: 1px solid var(--border); background: var(--surface-2); display: flex; align-items: flex-start; gap: 12px; flex-shrink: 0; }
+.kb-prev-hd-info { flex: 1; min-width: 0; }
+.kb-prev-title { font-family: 'Noto Serif TC', serif; font-size: 15px; font-weight: 700; color: var(--text); line-height: 1.5; }
+.kb-prev-meta { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
+.kb-prev-close { width: 28px; height: 28px; border: none; border-radius: 50%; background: var(--surface-3); color: var(--text-lt); font-size: 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.kb-prev-body { flex: 1; overflow-y: auto; padding: 20px 24px; }
+.kb-prev-text { font-family: 'Noto Sans TC', sans-serif; font-size: 13.5px; line-height: 2; color: var(--text); white-space: pre-wrap; }
+.kb-prev-ft { padding: 12px 20px; border-top: 1px solid var(--border); background: var(--surface-2); display: flex; gap: 8px; flex-shrink: 0; }
+.kb-prev-sel-btn { padding: 8px 18px; border: none; border-radius: var(--radius-sm); background: var(--navy); color: #fff; font-size: 13px; font-weight: 700; cursor: pointer; }
+.kb-prev-sel-btn.remove { background: var(--error); }
+.kb-prev-cancel { padding: 8px 14px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); color: var(--text-lt); font-size: 13px; cursor: pointer; margin-left: auto; }
+
+/* Ref preview modal */
+.ref-card { background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 6px; }
+
+/* Toast */
+.toast {
+  position: fixed; bottom: 22px; left: 50%;
+  transform: translateX(-50%) translateY(16px);
+  background: var(--navy); color: #fff;
+  padding: 10px 20px; border-radius: 99px;
+  font-size: 12px; opacity: 0;
+  transition: all 0.28s; z-index: 9999;
+  pointer-events: none; white-space: nowrap;
+  border: 1px solid rgba(201,168,76,0.3);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- ═══════ API MODAL ═══════ -->
+<div class="modal-bg" id="apiModal">
+  <div class="modal-box">
+    <div class="m-hd">
+      <div class="m-hd-icon">🔑</div>
+      <h2>設定 Gemini API Key</h2>
+      <p>Key 僅儲存於瀏覽器本地（localStorage），不會上傳至任何伺服器。</p>
+    </div>
+    <div class="m-body">
+      <div>
+        <label class="m-label">API KEY</label>
+        <div class="m-inp-wrap">
+          <input class="m-inp" type="password" id="apiKeyInput" placeholder="AIzaSy… 或 AQ.…" autocomplete="off" />
+          <button class="m-eye" onclick="toggleEye()">👁</button>
+        </div>
+        <div class="m-hint">尚未取得？請至 <a href="https://aistudio.google.com/apikey" target="_blank">Google AI Studio</a> 免費申請。
+          <span onclick="const b=document.getElementById('apiGuideBox');b.style.display=b.style.display==='none'?'block':'none';" style="margin-left:6px;color:var(--blue);font-size:11px;cursor:pointer;font-weight:700;text-decoration:underline;">📋 申請操作說明 ▾</span>
+        </div>
+        <!-- 申請操作流程說明（可展開） -->
+        <div id="apiGuideBox" style="display:none;margin-top:8px;background:#f0f7ff;border:1px solid #bfdbfe;border-radius:8px;padding:12px 14px;font-size:11px;line-height:1.8;color:#1e3a5f;">
+          <div style="font-weight:700;color:#1e40af;margin-bottom:8px;font-size:12px;">📋 Google AI Studio 申請 API Key 步驟</div>
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            <div style="display:flex;gap:8px;align-items:flex-start;">
+              <span style="background:#1d4ed8;color:#fff;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px;">1</span>
+              <span>點選上方連結前往 <strong>Google AI Studio</strong>（aistudio.google.com），使用 Google 帳號登入</span>
+            </div>
+            <div style="display:flex;gap:8px;align-items:flex-start;">
+              <span style="background:#1d4ed8;color:#fff;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px;">2</span>
+              <span>登入後，點選左側選單的 <strong>「Get API key」</strong> 或頁面上方的 <strong>「API Keys」</strong> 按鈕</span>
+            </div>
+            <div style="display:flex;gap:8px;align-items:flex-start;">
+              <span style="background:#1d4ed8;color:#fff;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px;">3</span>
+              <span>點選 <strong>「Create API key」</strong>，系統會自動建立一組 API Key</span>
+            </div>
+            <div style="display:flex;gap:8px;align-items:flex-start;">
+              <span style="background:#1d4ed8;color:#fff;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px;">4</span>
+              <span>複製產生的 API Key（開頭為 <code style="background:#dbeafe;padding:0 4px;border-radius:3px;">AIzaSy…</code>），貼到上方輸入欄位</span>
+            </div>
+            <div style="display:flex;gap:8px;align-items:flex-start;">
+              <span style="background:#059669;color:#fff;border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:1px;">✓</span>
+              <span>免費額度每日可使用數百次，系統固定使用 <strong>Gemini 2.5 Flash</strong> 模型，效能與配額最佳</span>
+            </div>
+          </div>
+          <div style="margin-top:10px;padding:6px 10px;background:#fef3c7;border-radius:5px;color:#92400e;font-size:10.5px;">
+            ⚠️ API Key 請勿分享他人，Key 僅存於您的瀏覽器本地端，系統不會上傳或儲存於伺服器。
+          </div>
+        </div>
+      </div>
+      <!-- 固定使用 Gemini 2.5 Flash，不需選擇模型 -->
+      <div class="m-foot">
+        <button class="btn-cancel" onclick="closeModal()">取消</button>
+        <button class="btn-save" onclick="saveKey()">✓ 儲存並連線</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ TOP NAV ═══════ -->
+<header class="top-bar">
+  <div class="tb-left">
+    <div class="tb-logo">
+      <div class="tb-logo-icon">🏛️</div>
+      <div>
+        <div class="tb-org">財政部高雄國稅局</div>
+        <div class="tb-title">新聞稿 AI 生成系統</div>
+      </div>
+    </div>
+    <div class="tb-divider"></div>
+  </div>
+  <div class="tb-right">
+    <div class="api-pill" onclick="openModal()">
+      <div class="s-dot" id="sDot"></div>
+      <span id="sText">點此設定 API Key</span>
+    </div>
+    <div class="model-chip" id="mTag">Gemini</div>
+  </div>
+</header>
+
+<!-- ═══════ STATUS BAR ═══════ -->
+<div class="status-bar">
+  <div class="sb-stats">
+    <div class="sb-stat">
+      <span class="sb-stat-icon">📍</span>
+      <span class="sb-stat-label">步驟</span>
+      <span class="sb-stat-val" id="sbStep">步驟一</span>
+    </div>
+    <div class="sb-stat">
+      <span class="sb-stat-icon">🗂️</span>
+      <span class="sb-stat-label">知識庫</span>
+      <span class="sb-stat-val" id="sbKb">未載入</span>
+    </div>
+    <div class="sb-stat">
+      <span class="sb-stat-icon">📌</span>
+      <span class="sb-stat-label">參考範本</span>
+      <span class="sb-stat-val" id="sbRef">0 則</span>
+    </div>
+    <div class="sb-stat">
+      <span class="sb-stat-icon">📎</span>
+      <span class="sb-stat-label">補充來源</span>
+      <span class="sb-stat-val" id="sbSrc">0 份</span>
+    </div>
+    <div class="sb-stat">
+      <span class="sb-stat-icon">📐</span>
+      <span class="sb-stat-label">範本模式</span>
+      <span class="sb-stat-val" id="sbTpl">自動選擇</span>
+    </div>
+  </div>
+  <div class="sb-actions" id="sbActions" style="display:none;">
+    <button class="sb-action-btn" onclick="openRefPreview()">📋 預覽參考資料</button>
+    <button class="sb-action-btn primary" id="genBtnTop" onclick="goAndGenerate()">✦ 產出新聞稿</button>
+  </div>
+</div>
+
+<!-- ═══════ APP BODY ═══════ -->
+<div class="app-body">
+
+  <!-- ════ LEFT SIDEBAR ════ -->
+  <nav class="step-sidebar">
+    <div class="sidebar-hd">
+      <div class="sidebar-hd-title">操作流程</div>
+      <div class="sidebar-hd-sub">依步驟填寫，完成後產出新聞稿</div>
+    </div>
+
+    <div class="step-list">
+      <div class="step-row" id="navStep0" onclick="openModal()">
+        <div class="step-num-wrap">
+          <div class="step-num" id="apiStepNum"><span>一</span></div>
+        </div>
+        <div class="step-info">
+          <div class="step-name">步驟一・設定 API Key</div>
+          <div class="step-desc">輸入 Gemini API Key 以啟用 AI 功能</div>
+        </div>
+      </div>
+      <div style="width:1px;height:10px;background:var(--border);margin:0 0 0 22px;"></div>
+
+      <div class="step-row active" id="navStep1" onclick="goStep(1)">
+        <div class="step-num-wrap">
+          <div class="step-num"><span>二</span></div>
+        </div>
+        <div class="step-info">
+          <div class="step-name">步驟二・主題與內容</div>
+          <div class="step-desc">填寫新聞稿主題、法條與說明重點</div>
+        </div>
+      </div>
+      <div style="width:1px;height:10px;background:var(--border);margin:0 0 0 22px;"></div>
+
+      <div class="step-row" id="navStep2" onclick="goStep(2)">
+        <div class="step-num-wrap">
+          <div class="step-num"><span>三</span></div>
+        </div>
+        <div class="step-info">
+          <div class="step-name">步驟三・載入知識庫</div>
+          <div class="step-desc">搜尋並勾選參考新聞稿範本</div>
+        </div>
+      </div>
+      <div style="width:1px;height:10px;background:var(--border);margin:0 0 0 22px;"></div>
+
+      <div class="step-row" id="navStep3" onclick="goStep(3)">
+        <div class="step-num-wrap">
+          <div class="step-num"><span>四</span></div>
+        </div>
+        <div class="step-info">
+          <div class="step-name">步驟四・補充參考來源</div>
+          <div class="step-desc">上傳檔案或貼上文字作為額外依據</div>
+        </div>
+      </div>
+      <div style="width:1px;height:10px;background:var(--border);margin:0 0 0 22px;"></div>
+
+      <div class="step-row" id="navStep4" onclick="goStep(4)">
+        <div class="step-num-wrap">
+          <div class="step-num"><span>五</span></div>
+        </div>
+        <div class="step-info">
+          <div class="step-name">步驟五・選擇範本模式</div>
+          <div class="step-desc">五種範本：法規、查核、民眾等</div>
+        </div>
+      </div>
+      <div style="width:1px;height:10px;background:var(--border);margin:0 0 0 22px;"></div>
+
+      <div class="step-row" id="navStep5" onclick="goStep(5)">
+        <div class="step-num-wrap">
+          <div class="step-num"><span>六</span></div>
+        </div>
+        <div class="step-info">
+          <div class="step-name">步驟六・產出新聞稿</div>
+          <div class="step-desc">AI 生成並可互動修改</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-footer" id="sidebarFooter" style="display:none;">
+      <button class="btn-generate" id="genBtn" onclick="goAndGenerate()">
+        <div class="gen-spin"></div>
+        <span class="gen-icon">✦</span>
+        <span class="gen-bt">產出新聞稿</span>
+      </button>
+      <button class="btn-preview-ref" onclick="openRefPreview()">📋 預覽參考資料</button>
+    </div>
+  </nav>
+
+  <!-- ════ MAIN CONTENT ════ -->
+  <div class="content-area">
+    <div class="step-panels">
+
+      <!-- ══ STEP 1 ══ -->
+      <div class="step-panel active" id="panel1">
+        <div class="panel-split">
+          <div class="split-left">
+            <div class="panel-hd">
+              <div class="panel-hd-row">
+                <div class="panel-step-badge">2</div>
+                <div class="panel-hd-title">新聞稿主題與主要內容</div>
+              </div>
+              <div class="panel-hd-desc">請詳細描述主題、適用法條與說明重點，填寫後可至步驟三搜尋相關範本</div>
+            </div>
+            <div class="panel-scroll">
+              <div class="field-group">
+                <label class="field-label">主題說明 <span class="field-req">*</span></label>
+                <textarea id="mainContent" rows="10" placeholder="請描述：
+• 新聞稿主題（例：個人出售繼承房地適用房地合一稅）
+• 適用法條（例：所得稅法第14條之4）
+• 案例說明（如有）
+• 重要數字或期限
+• 聯絡人資訊"></textarea>
+              </div>
+              <div class="info-box blue">
+                💡 填寫後系統會自動在知識庫中搜尋相關參考範本，請前往步驟三查看結果
+              </div>
+              <div class="step-nav-btns">
+                <button class="btn-next" onclick="goStep(2)">下一步：載入知識庫 →</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: guidance -->
+          <div class="split-right">
+            <div class="guide-panel-hd">
+              <div class="guide-panel-title">📘 填寫說明與範例</div>
+              <div class="guide-panel-sub">以下為常見的新聞稿類型與七段式結構說明</div>
+            </div>
+            <div class="guide-scroll">
+              <div style="font-size:11px;font-weight:700;color:var(--text-lt);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:6px;">常見新聞稿類型</div>
+              <div class="type-card">
+                <div class="type-badge" style="background:#1a73e8">A</div>
+                <div class="type-card-body">
+                  <div class="type-card-name">法規宣導型</div>
+                  <div class="type-card-desc">說明法規內容、申報方式與計算方式</div>
+                  <div class="type-card-eg">範例：房地合一稅優惠稅率申請條件說明</div>
+                </div>
+              </div>
+              <div class="type-card">
+                <div class="type-badge" style="background:#c0392b">B</div>
+                <div class="type-card-body">
+                  <div class="type-card-name">查核案例型</div>
+                  <div class="type-card-desc">揭示違規情形，強調補稅罰鍰後果</div>
+                  <div class="type-card-eg">範例：漏報租金所得遭補稅並裁罰</div>
+                </div>
+              </div>
+              <div class="type-card">
+                <div class="type-badge" style="background:#27ae60">C</div>
+                <div class="type-card-body">
+                  <div class="type-card-name">民眾詢問型</div>
+                  <div class="type-card-desc">解答來電民眾常見稅務疑義</div>
+                  <div class="type-card-eg">範例：繼承房地如何申報所得稅</div>
+                </div>
+              </div>
+              <div class="type-card">
+                <div class="type-badge" style="background:#d97706">D</div>
+                <div class="type-card-body">
+                  <div class="type-card-name">節稅規劃提醒型</div>
+                  <div class="type-card-desc">揭示節稅誤區與反面案例</div>
+                  <div class="type-card-eg">範例：代繳土地增值稅被視同贈與</div>
+                </div>
+              </div>
+              <div class="type-card">
+                <div class="type-badge" style="background:#7c3aed">E</div>
+                <div class="type-card-body">
+                  <div class="type-card-name">活動公告型</div>
+                  <div class="type-card-desc">公告講習、申報期限等行政事務</div>
+                  <div class="type-card-eg">範例：114年度租稅法規講習報名</div>
+                </div>
+              </div>
+
+              <div style="font-size:11px;font-weight:700;color:var(--text-lt);letter-spacing:0.5px;text-transform:uppercase;margin:4px 0 6px;">七段式標準架構</div>
+              <div class="struct-card">
+                <div class="struct-card-hd">📋 高雄國稅局新聞稿標準格式</div>
+                <div class="struct-list">
+                  <div class="struct-item"><div class="struct-num">①</div><div class="struct-text">標題 <em>（7-20字，稅種＋行為＋結果）</em></div></div>
+                  <div class="struct-item"><div class="struct-num">②</div><div class="struct-text">首段 <em>（「財政部高雄國稅局表示，…」）</em></div></div>
+                  <div class="struct-item"><div class="struct-num">③</div><div class="struct-text">法規依據 <em>（「該局說明，依…規定，…」）</em></div></div>
+                  <div class="struct-item"><div class="struct-num">④</div><div class="struct-text">案例說明 <em>（「該局舉例說明，甲君…」）</em></div></div>
+                  <div class="struct-item"><div class="struct-num">⑤</div><div class="struct-text">注意事項 <em>（「該局特別提醒，…」）</em></div></div>
+                  <div class="struct-item"><div class="struct-num">⑥</div><div class="struct-text">結語 <em>（免費服務電話 0800-000-321）</em></div></div>
+                  <div class="struct-item"><div class="struct-num">⑦</div><div class="struct-text">聯絡資訊 <em>（新聞稿聯絡人資訊）</em></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ STEP 2 ══ -->
+      <div class="step-panel" id="panel2">
+        <div class="panel-split">
+          <!-- Left: upload + chosen list -->
+          <div class="split-left">
+            <div class="panel-hd">
+              <div class="panel-hd-row">
+                <div class="panel-step-badge">3</div>
+                <div class="panel-hd-title">載入新聞稿知識庫</div>
+              </div>
+              <div class="panel-hd-desc">上傳 JSON 格式知識庫，可在右側搜尋並勾選參考範本</div>
+            </div>
+            <div class="panel-scroll">
+              <div class="field-group">
+                <label class="field-label">知識庫檔案 (.json)</label>
+                <div class="json-zone" id="jsonZone">
+                  <input type="file" id="jsonFileInput" accept=".json" />
+                  <div class="up-icon">📋</div>
+                  <div class="up-text"><strong>點擊匯入</strong>或拖放 .json 知識庫<br><span style="font-size:10px;color:var(--text-faint);">格式：{"articles":[{"id","title","category","keywords":[],"summary","full_text"}]}</span></div>
+                </div>
+                <input type="file" id="jsonAutoInput" accept=".json" style="display:none;" />
+              </div>
+
+              <div id="kbStatusBox" style="display:none;">
+                <div class="info-box green" id="kbStatusMsg"></div>
+              </div>
+
+              <div id="kbLeftChosen" style="display:none;">
+                <div class="field-label" style="margin-bottom:8px;">
+                  📌 已選參考範本
+                  <span id="kbLeftCnt" style="background:var(--teal);color:#fff;padding:1px 9px;border-radius:99px;font-size:10px;margin-left:4px;">0</span>
+                </div>
+                <div id="kbLeftChosenList" style="display:flex;flex-direction:column;gap:5px;"></div>
+                <button onclick="clearKbSel()" style="margin-top:8px;width:100%;padding:7px;border:1px solid var(--border);background:var(--surface);color:var(--text-lt);border-radius:var(--radius-sm);font-size:11px;">全部清除</button>
+              </div>
+
+              <div class="step-nav-btns">
+                <button class="btn-prev" onclick="goStep(1)">← 上一步</button>
+                <button class="btn-next" onclick="goStep(3)">下一步 →</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: search + results -->
+          <div class="split-right" id="kbRightPane" style="background:var(--surface);display:flex;flex-direction:column;overflow:hidden;height:100%;min-height:0;position:relative;">
+            <div class="kb-right-hd" style="flex-shrink:0;z-index:1;position:relative;">
+              <div class="kb-right-title">🗂️ 知識庫瀏覽 <span class="kb-badge" id="kbBadge">未載入</span></div>
+              <div style="font-size:10px;color:var(--text-faint);">點標題預覽全文｜點 ＋ 加入參考</div>
+            </div>
+            <div class="kb-search-row">
+              <input class="kb-si" id="kbSI" placeholder="輸入關鍵字搜尋，例：房地合一、統一發票…" onkeydown="if(event.key==='Enter')searchKb()" />
+              <button class="kb-sbtn" onclick="searchKb()">搜尋</button>
+              <button class="kb-sbtn ghost" onclick="clearKbSearch()" title="回全部分類">⌂</button>
+              <button class="kb-sbtn accent" onclick="autoSearchKbFromMain()" title="依主題自動萃取關鍵詞" style="white-space:nowrap;font-size:11px;padding:8px 10px;">🔍 依主題</button>
+            </div>
+            <!-- 關鍵詞勾選區 - 僅在萃取後顯示 -->
+            <div id="kwPickerBar" style="display:none;padding:8px 14px 10px;background:#f0f7ff;border-bottom:1px solid #bfdbfe;flex-shrink:0;">
+              <div style="font-size:11px;font-weight:700;color:#1e40af;margin-bottom:6px;">🏷️ AI 萃取關鍵詞（可勾選/取消，也可自行新增）：</div>
+              <div id="kwPickerChips" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;"></div>
+              <!-- 自行新增關鍵詞 -->
+              <div style="display:flex;gap:5px;margin-bottom:8px;">
+                <input id="kwCustomInput" type="text" placeholder="輸入自訂關鍵詞後按 Enter 或點＋" maxlength="20"
+                  style="flex:1;padding:4px 10px;border:1.5px solid #93c5fd;border-radius:99px;font-size:12px;outline:none;background:#fff;"
+                  onkeydown="if(event.key==='Enter'){event.preventDefault();addCustomKw();}" />
+                <button onclick="addCustomKw()" style="padding:4px 12px;background:#3b82f6;color:#fff;border:none;border-radius:99px;font-size:13px;font-weight:700;cursor:pointer;">＋</button>
+              </div>
+              <div style="display:flex;gap:6px;">
+                <button onclick="execKwSearch()" style="padding:5px 16px;background:var(--navy);color:#fff;border:none;border-radius:var(--radius-sm);font-size:12px;font-weight:700;cursor:pointer;">✓ 執行搜尋</button>
+                <button onclick="document.getElementById('kwPickerBar').style.display='none'" style="padding:5px 12px;background:var(--surface);color:var(--text-lt);border:1px solid var(--border);border-radius:var(--radius-sm);font-size:11px;cursor:pointer;">取消</button>
+              </div>
+            </div>
+            <div class="kb-filter-row" id="kbTaxFilter" style="display:none;">
+              <span class="kb-filter-label">🔖 限定稅目（可複選，不選則搜全部）：</span>
+            </div>
+            <div class="kb-body" id="kbResults">
+              <div style="text-align:center;padding:40px;color:var(--text-faint);">
+                <div style="font-size:38px;margin-bottom:12px;opacity:0.4;">📂</div>
+                <div style="font-size:13px;font-weight:600;">請先上傳知識庫 JSON 檔案</div>
+                <div style="font-size:11px;margin-top:6px;">上傳後可搜尋並勾選歷史新聞稿作為參考範本</div>
+              </div>
+            </div>
+
+            <!-- Chosen bar -->
+            <div class="kb-chosen-bar" id="chosenWrap">
+              <div class="kb-chosen-bar-hd">
+                <div class="kb-chosen-title">✓ 已選參考範本 <span class="kb-chosen-cnt" id="chosenCnt">0</span></div>
+                <button class="kb-clr-btn" onclick="clearKbSel()">全部清除</button>
+              </div>
+              <div class="kb-chips" id="chosenBody"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ STEP 3 ══ -->
+      <div class="step-panel" id="panel3">
+        <div class="panel-split">
+          <div class="split-left">
+            <div class="panel-hd">
+              <div class="panel-hd-row">
+                <div class="panel-step-badge">4</div>
+                <div class="panel-hd-title">上傳補充參考來源</div>
+              </div>
+              <div class="panel-hd-desc">法條、文件或文字，作為 AI 的額外依據（可省略此步驟）</div>
+            </div>
+            <div class="panel-scroll">
+              <div class="field-group">
+                <label class="field-label">補充參考來源</label>
+                <div class="src-box">
+                  <div class="src-tabs">
+                    <button class="src-tab active" onclick="switchSrcTab('file')">📁 上傳檔案</button>
+                    <button class="src-tab" onclick="switchSrcTab('text')">📝 貼上文字</button>
+                  </div>
+                  <div class="src-pane active" id="srcPaneFile">
+                    <div class="upload-zone" id="uploadZone">
+                      <input type="file" id="fileInput" multiple accept=".pdf,.txt,.csv,.md,.docx,.jpg,.jpeg,.png,.webp,.gif" />
+                      <div class="up-icon" style="font-size:20px;">📂</div>
+                      <div class="up-text"><strong>點擊選擇</strong>或拖放檔案至此<br><span style="font-size:10px;color:var(--text-faint)">PDF・TXT・DOCX・MD・CSV・圖片</span></div>
+                    </div>
+                    <div class="src-list" id="fileList"></div>
+                  </div>
+                  <div class="src-pane" id="srcPaneText">
+                    <div style="font-size:10px;color:var(--text-faint);line-height:1.6;">可貼入法條全文、問答紀錄、函釋等純文字資料</div>
+                    <textarea id="refContent" rows="5" placeholder="• 完整法條文字&#10;• 過往問答紀錄&#10;• 相關規定或函釋"></textarea>
+                    <button onclick="addTextRef()" style="width:100%;padding:8px;background:var(--navy);color:#fff;border:none;border-radius:var(--radius-sm);font-size:12px;font-weight:700;">＋ 加入參考清單</button>
+                    <div class="src-list" id="textRefList"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="step-nav-btns">
+                <button class="btn-prev" onclick="goStep(2)">← 上一步</button>
+                <button class="btn-next" onclick="goStep(4)">下一步 →</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: source list - fixed height scrollable panel -->
+          <div class="split-right" style="display:flex;flex-direction:column;overflow:hidden;min-height:0;">
+            <div class="panel-hd" style="background:var(--surface);flex-shrink:0;">
+              <div class="panel-hd-row">
+                <div class="panel-hd-title" style="color:var(--text-md);">📋 已加入的參考資料</div>
+                <span id="srcCountBadge" style="margin-left:8px;font-size:10px;background:var(--navy);color:var(--gold);padding:2px 9px;border-radius:99px;font-weight:700;display:none;">0 份</span>
+              </div>
+              <div class="panel-hd-desc">以下內容將一併送入 AI 生成新聞稿（此窗格可獨立捲動）</div>
+            </div>
+            <div id="srcPreviewList" style="flex:1;min-height:0;overflow-y:auto;padding:12px 14px;background:var(--bg);display:flex;flex-direction:column;gap:8px;">
+              <div style="text-align:center;padding:36px;color:var(--text-faint);">
+                <div style="font-size:36px;margin-bottom:10px;opacity:0.4;">📭</div>
+                <div style="font-size:13px;font-weight:600;">尚未加入任何補充資料</div>
+                <div style="font-size:11px;margin-top:6px;">此步驟可省略，AI 將以主題與知識庫內容生成</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ STEP 4 ══ -->
+      <div class="step-panel" id="panel4">
+        <div class="panel-split">
+          <div class="split-left" style="overflow:hidden;background:var(--bg);">
+            <div class="panel-hd" style="background:var(--surface);">
+              <div class="panel-hd-row">
+                <div class="panel-step-badge">5</div>
+                <div class="panel-hd-title">選擇新聞稿範本模式</div>
+              </div>
+              <div class="panel-hd-desc">選擇適合的範本類型，或讓 AI 自動判斷</div>
+            </div>
+            <div class="tpl-auto-bar">
+              <div class="tpl-auto-label">🤖 <strong>自動選擇</strong>：讓 AI 依內容自動挑選最適合的範本</div>
+              <label class="tpl-toggle">
+                <input type="checkbox" id="tplAutoToggle" checked onchange="onTplAutoToggle()" />
+                <div class="tpl-track"></div>
+                <div class="tpl-thumb"></div>
+              </label>
+            </div>
+            <div class="tpl-auto-hint" id="tplAutoHint"></div>
+            <div class="tpl-grid-wrap">
+              <div class="tpl-grid" id="tplCards">
+                <!-- 點擊整張卡片即選用，右側自動顯示結構說明 -->
+                <div class="tpl-card disabled" id="tplCard_A" onclick="selectTpl('A')" style="cursor:pointer;">
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <span class="tpl-badge tpl-badge-A">A</span>
+                    <span style="font-size:13px;font-weight:700;color:var(--text);">法規宣導型</span>
+                    <span class="tpl-sel-check" id="chk_A" style="margin-left:auto;font-size:16px;color:var(--teal);display:none;">✓</span>
+                  </div>
+                  <div class="tpl-card-desc">說明法規內容、宣導申報義務與計算方式</div>
+                </div>
+                <div class="tpl-card disabled" id="tplCard_B" onclick="selectTpl('B')" style="cursor:pointer;">
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <span class="tpl-badge tpl-badge-B">B</span>
+                    <span style="font-size:13px;font-weight:700;color:var(--text);">查核案例型</span>
+                    <span class="tpl-sel-check" id="chk_B" style="margin-left:auto;font-size:16px;color:var(--teal);display:none;">✓</span>
+                  </div>
+                  <div class="tpl-card-desc">揭示違規查核情形，強調補稅罰鍰後果</div>
+                </div>
+                <div class="tpl-card disabled" id="tplCard_C" onclick="selectTpl('C')" style="cursor:pointer;">
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <span class="tpl-badge tpl-badge-C">C</span>
+                    <span style="font-size:13px;font-weight:700;color:var(--text);">民眾詢問型</span>
+                    <span class="tpl-sel-check" id="chk_C" style="margin-left:auto;font-size:16px;color:var(--teal);display:none;">✓</span>
+                  </div>
+                  <div class="tpl-card-desc">以民眾實際來電提問為引子，解答稅務疑義</div>
+                </div>
+                <div class="tpl-card disabled" id="tplCard_D" onclick="selectTpl('D')" style="cursor:pointer;">
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <span class="tpl-badge tpl-badge-D">D</span>
+                    <span style="font-size:13px;font-weight:700;color:var(--text);">節稅提醒型</span>
+                    <span class="tpl-sel-check" id="chk_D" style="margin-left:auto;font-size:16px;color:var(--teal);display:none;">✓</span>
+                  </div>
+                  <div class="tpl-card-desc">揭示常見節稅誤區，以反面案例警示民眾</div>
+                </div>
+                <div class="tpl-card disabled" id="tplCard_E" onclick="selectTpl('E')" style="cursor:pointer;grid-column:1/-1;">
+                  <div style="display:flex;align-items:center;gap:8px;">
+                    <span class="tpl-badge tpl-badge-E">E</span>
+                    <span style="font-size:13px;font-weight:700;color:var(--text);">活動公告型</span>
+                    <span class="tpl-sel-check" id="chk_E" style="margin-left:auto;font-size:16px;color:var(--teal);display:none;">✓</span>
+                  </div>
+                  <div class="tpl-card-desc">公告講習、宣導活動、申報期限等行政事務資訊</div>
+                </div>
+              </div>
+              <div class="step-nav-btns" style="padding:0 0 16px;">
+                <button class="btn-prev" onclick="goStep(3)">← 上一步</button>
+                <button class="btn-next" onclick="goStep(5)">下一步 →</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: template detail -->
+          <div class="split-right">
+            <div class="panel-hd" style="background:var(--surface);">
+              <div class="panel-hd-row">
+                <div class="panel-hd-title" style="color:var(--text-md);">📐 範本結構說明</div>
+              </div>
+              <div class="panel-hd-desc">選擇範本後，此處顯示段落結構與寫作要點</div>
+            </div>
+            <div class="tpl-detail-pane" id="tplDetailRight">
+              <div class="tpl-detail-placeholder">
+                <div class="tpl-detail-icon">📐</div>
+                <div style="font-size:13px;font-weight:600;color:var(--text-lt);">請先選擇範本</div>
+                <div style="font-size:11px;color:var(--text-faint);">點左側「✓ 選用」或「📋 結構」查看詳細說明</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ STEP 5 ══ -->
+      <div class="step-panel" id="panel5">
+        <div class="output-wrapper">
+          <!-- Left: titles + title quick edit -->
+          <div class="output-left">
+            <div class="title-area">
+              <div class="ov" id="titleOv">
+                <div class="ov-spin"></div>
+                <div class="ov-msg" id="titleOvMsg">AI 正在重新生成標題…</div>
+              </div>
+              <div class="section-label">新聞稿標題選項（請點選其一）</div>
+              <div id="titleArea"><div class="t-empty">✦ 點擊「產出新聞稿」後，將顯示 5 個標題供您選擇</div></div>
+            </div>
+            <!-- Title quick edit - stays under title -->
+            <div class="title-edit-bar">
+              <div class="qbtns-row">
+                <span class="qlabel">標題快速修改：</span>
+                <button class="qbtn" onclick="qTitle('請重新生成5個不同角度的標題選項，必須使用 [TITLE_1] 到 [TITLE_5] 格式標記，並保留原本正文內容不變。')">🔄 重新生成</button>
+                <button class="qbtn" onclick="qTitle('請將5個標題改得更簡短有力，控制在15字以內，必須使用 [TITLE_1] 到 [TITLE_5] 格式標記，並保留原本正文內容不變。')">✂️ 更簡短</button>
+                <button class="qbtn" onclick="qTitle('請將5個標題改得更強調民眾權益與注意事項，必須使用 [TITLE_1] 到 [TITLE_5] 格式標記，並保留原本正文內容不變。')">👥 強調權益</button>
+                <button class="qbtn" onclick="qTitle('請將5個標題改得更活潑吸睛、有新聞感，必須使用 [TITLE_1] 到 [TITLE_5] 格式標記，並保留原本正文內容不變。')">🎯 活潑吸睛</button>
+              </div>
+              <div class="title-input-row">
+                <input class="title-inp" id="titleInp" type="text" placeholder="自訂標題修改需求，例如：請加入「房地合一」關鍵字…" onkeydown="if(event.key==='Enter')qTitleCustom()" />
+                <button class="title-send-btn" id="titleSendBtn" onclick="qTitleCustom()">➤</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: content display + content quick edit chat -->
+          <div class="output-right">
+            <div class="content-wrapper">
+              <div class="c-header">
+                <div class="section-label">新聞稿內容</div>
+              </div>
+              <div class="c-box">
+                <div class="c-toolbar">
+                  <button class="tb-btn" onclick="copyContent()">📋 複製全文</button>
+                  <button class="tb-btn" onclick="dlTxt()">💾 下載 ODT</button>
+                  <div class="tb-sep"></div>
+                  <button class="tb-btn" id="editBtn" onclick="toggleEdit()">✏️ 手動編輯</button>
+                  <button class="tb-btn" onclick="clearAll()">🗑️ 清除</button>
+                  <div class="tb-r"><span class="wc-badge" id="wc">0 字</span></div>
+                </div>
+                <div class="c-ov" id="ov">
+                  <div class="c-ov-spin"></div>
+                  <div class="c-ov-msg" id="ovMsg">AI 正在生成新聞稿…</div>
+                </div>
+                <div id="cDisplay" class="c-display" contenteditable="false" oninput="updateWc()">
+                  <div class="ph">新聞稿內容將顯示於此。<br><br>請先在步驟一填寫主題，設定 API Key 後，<br>點擊「產出新聞稿」即可生成。</div>
+                </div>
+              </div>
+            </div>
+            <!-- Content quick edit - placed BELOW content on the right side -->
+            <div class="chat-area" style="border-top:2px solid var(--border-md);background:var(--surface);flex-shrink:0;">
+              <div class="qbtns-row">
+                <span class="qlabel">內文快速修改：</span>
+                <button class="qbtn" onclick="q('請讓語氣更親民易懂')">📢 更親民</button>
+                <button class="qbtn" onclick="q('請加強法律依據的說明')">⚖️ 加強法條</button>
+                <button class="qbtn" onclick="q('請新增一個具體案例說明')">📌 加案例</button>
+                <button class="qbtn" onclick="q('請濃縮精簡，刪除贅詞')">✂️ 精簡</button>
+                <button class="qbtn" onclick="q('請加強警示提醒的語氣')">⚠️ 強化警示</button>
+              </div>
+              <div class="chat-hist" id="chatHist"></div>
+              <div class="chat-row">
+                <textarea class="chat-inp" id="chatInp" placeholder="輸入內文修改指示，例如：請將第二段的法條改為第24條之5…" rows="2" onkeydown="ck(event)"></textarea>
+                <button class="send-btn" id="sendBtn" onclick="sendRev()">➤</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end step-panels -->
+  </div><!-- end content-area -->
+</div><!-- end app-body -->
+
+<!-- ═══════ KB PREVIEW MODAL ═══════ -->
+<div class="kb-prev-bg" id="kbPrevModal">
+  <div class="kb-prev-box">
+    <div class="kb-prev-hd">
+      <div class="kb-prev-hd-info">
+        <div class="kb-prev-title" id="kbPrevTitle"></div>
+        <div class="kb-prev-meta" id="kbPrevMeta"></div>
+      </div>
+      <button class="kb-prev-close" onclick="closeKbPreview()">✕</button>
+    </div>
+    <div class="kb-prev-body">
+      <div class="kb-prev-text" id="kbPrevText"></div>
+    </div>
+    <div class="kb-prev-ft">
+      <button class="kb-prev-sel-btn" id="kbPrevSelBtn" onclick="toggleKbFromPreview()"></button>
+      <button class="kb-prev-cancel" onclick="closeKbPreview()">關閉</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ REF PREVIEW MODAL ═══════ -->
+<div class="modal-bg" id="refPrevModal" onclick="if(event.target===this)closeRefPreview()">
+  <div class="modal-box" style="width:700px;max-width:96vw;max-height:88vh;display:flex;flex-direction:column;">
+    <div class="m-hd" style="flex-shrink:0;">
+      <div class="m-hd-icon">📋</div>
+      <h2>參考資料預覽</h2>
+      <p>以下為即將送入 AI 的所有參考內容，確認後再產出新聞稿。</p>
+    </div>
+    <div style="flex:1;overflow-y:auto;padding:18px 22px;display:flex;flex-direction:column;gap:12px;" id="refPrevBody"></div>
+    <div style="padding:14px 22px;border-top:1px solid var(--border);display:flex;gap:8px;flex-shrink:0;background:var(--surface-2);">
+      <button onclick="closeRefPreview()" style="flex:1;padding:9px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text-lt);font-size:13px;cursor:pointer;">關閉</button>
+      <button onclick="closeRefPreview();generate();" style="flex:2;padding:9px;border:none;border-radius:var(--radius-sm);background:var(--navy);color:#fff;font-size:13px;font-weight:700;cursor:pointer;">✦ 確認並產出新聞稿</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ TEMPLATE DETAIL MODAL ═══════ -->
+<div class="tpl-modal-overlay" id="tplDetailModal" onclick="if(event.target===this)closeTplDetail()">
+  <div class="tpl-modal">
+    <div class="tpl-modal-hd">
+      <span class="tpl-modal-badge" id="tplModalBadge"></span>
+      <div style="flex:1;">
+        <div class="tpl-modal-name" id="tplModalName"></div>
+        <div class="tpl-modal-sub" id="tplModalSub"></div>
+      </div>
+      <button class="tpl-modal-close" onclick="closeTplDetail()">✕</button>
+    </div>
+    <div class="tpl-modal-body" id="tplModalBody"></div>
+    <div class="tpl-modal-footer">
+      <button class="tpl-modal-use-btn" id="tplModalUseBtn" onclick="useTplFromModal()">選用此範本並關閉</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- ═══════ JS (preserved from original) ═══════ -->
+<script>
+// ─── STEP NAVIGATION ─────────────────────
+let curStep = 1;
+function goStep(n) {
+  for (let i = 1; i <= 5; i++) {
+    document.getElementById('panel' + i)?.classList.remove('active');
+    const nav = document.getElementById('navStep' + i);
+    if (nav) {
+      nav.classList.remove('active', 'done');
+      if (i < n) nav.classList.add('done');
+    }
+  }
+  document.getElementById('panel' + n)?.classList.add('active');
+  document.getElementById('navStep' + n)?.classList.add('active');
+  curStep = n;
+  document.getElementById('sbStep').textContent = '步驟' + ['二','三','四','五','六'][n - 1];
+  // 步驟五（panel5）才顯示產出新聞稿按鈕
+  const isStep5 = (n === 5);
+  const footer = document.getElementById('sidebarFooter');
+  const sbActs = document.getElementById('sbActions');
+  if (footer) footer.style.display = isStep5 ? 'flex' : 'none';
+  if (sbActs) sbActs.style.display = isStep5 ? 'flex' : 'none';
+
+  // 進入步驟四(範本選擇)時，若自動模式則立即依主題預判範本並顯示右側說明
+  if (n === 4 && tplAuto) {
+    const mainText = (document.getElementById('mainContent')?.value || '').trim();
+    if (mainText) {
+      const autoKey = autoDetectTpl(normalize(mainText));
+      showAutoTplHint(autoKey);
+    }
+  }
+
+  // update done step nums to checkmarks
+  for (let i = 1; i <= 5; i++) {
+    const num = document.querySelector('#navStep' + i + ' .step-num');
+    if (!num) continue;
+    if (i < n) { num.innerHTML = '✓'; }
+    else { num.innerHTML = `<span>${i}</span>`; }
+  }
+}
+
+function goAndGenerate() {
+  goStep(5);
+  generate();
+}
+
+// ─── STATE ───────────────────────────────
+let apiKey = localStorage.getItem('gapi') || '';
+let selModel = 'gemini-2.5-flash'; // 固定使用 Gemini 2.5 Flash
+let selTone = '正式嚴謹';
+let tplAuto = true;
+let selTpl  = '';
+let files = [];
+let curContent = '';
+let isEdit = false;
+let chatMsgs = [];
+let chatHist = [];
+let loading = false;
+let newsDb = [];
+let selKb = [];
+let selectedTaxCats = new Set();
+const UNIT = '財政部高雄國稅局';
+let textRefs = [];
+let urlSources = [];
+
+const CHAR_MAP = {'⼀':'一','⼆':'二','⼈':'人','⼊':'入','⼒':'力','⼗':'十','⼝':'口','⼟':'土','⼤':'大','⼥':'女','⼦':'子','⼩':'小','⼭':'山','⼯':'工','⼰':'己','⼸':'弓','⼼':'心','⼿':'手','⽀':'支','⽂':'文','⽇':'日','⽉':'月','⽊':'木','⽔':'水','⽕':'火','⽗':'父','⽚':'片','⽣':'生','⽤':'用','⽥':'田','⽩':'白','⽪':'皮','⽬':'目','⽯':'石','⽰':'示','⽴':'立','⽵':'竹','⽶':'米','⽷':'糸','⽸':'缶','⾁':'肉','⾃':'自','⾄':'至','⾆':'舌','⾊':'色','⾍':'虫','⾏':'行','⾐':'衣','⾒':'見','⾔':'言','⾕':'谷','⾛':'走','⾜':'足','⾞':'車','⾟':'辛','⾠':'辰','⾢':'邑','⾣':'酉','⾦':'金','⾧':'長','⾨':'門','⾩':'阜','⾯':'面','⾰':'革','⾲':'韭','⾳':'音','⾴':'頁','⾵':'風','⾶':'飛','⾷':'食','⾸':'首','⾹':'香','⾺':'馬','⾻':'骨','⾼':'高','⿁':'鬼','⿂':'魚','⿃':'鳥','⿄':'鹵','⿅':'鹿','⿆':'麥','⿇':'麻','⿈':'黃','⿊':'黑','⿍':'鼎','⿎':'鼓','⿐':'鼻','⿒':'齒','⿓':'龍'};
+function normalize(str) {
+  if (!str) return '';
+  let s = str;
+  for (const [bad, good] of Object.entries(CHAR_MAP)) s = s.replaceAll(bad, good);
+  return s;
+}
+
+const KNOWLEDGE = `
+═══════════════════════════════════════════
+【新聞稿標準架構與撰寫規範】
+═══════════════════════════════════════════
+
+本系統依財政部高雄國稅局新聞稿撰寫慣例，採用以下七段式標準架構，每次生成請嚴格遵守各段落格式與字數要求。法條內容請依撰稿人提供之參考資料為準，請勿自行假設或引用未經提供的法條。
+
+▌第1段：標題
+• 格式要求：精確傳達核心資訊，結構為「稅種＋行為＋結果」
+• 字數：7～20字
+• 範例：「出售自住房地符合條件　可適用房地合一稅優惠稅率」
+
+▌第2段：首段（導言）
+• 固定起式：「財政部高雄國稅局表示，」
+• 字數：30～60字
+
+▌第3段：法規依據
+• 固定起式：「該局說明，依……規定，」
+• 注意：法條名稱須完整寫出，如「依所得稅法第14條之4規定」
+• 重要：法條內容須完全依據撰稿人提供之參考資料，不得自行補充
+
+▌第4段：案例說明
+• 固定起式：「該局舉例說明，」
+• 匿名規則：個人用「甲君」「乙君」，公司用「甲公司」「乙公司」
+• 金額格式：「新臺幣（下同）XXX萬元」
+
+▌第5段：注意事項
+• 固定起式：「該局特別提醒，」
+
+▌第6段：結語
+• 固定格式：「民眾如有疑義，可撥打免費服務電話0800-000-321洽詢，或至該局網站（https://www.ntbk.gov.tw）利用國稅智慧客服「國稅小幫手」線上查詢。」
+
+▌第7段：聯絡資訊
+• 固定格式：「新聞稿聯絡人：[部門] [姓名]，電話：（07）XXXXXXX轉XXX」
+`;
+
+// ─── INIT ────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  updateStatus();
+  initUpload();
+  initJson();
+  document.getElementById('apiModal').addEventListener('click', e => { if (e.target.id === 'apiModal') closeModal(); });
+  initMainContentAutoSearch();
+  document.getElementById('kbPrevModal').addEventListener('click', e => { if (e.target.id === 'kbPrevModal') closeKbPreview(); });
+});
+
+function updateStatusBar() {
+  document.getElementById('sbKb').textContent = newsDb.length ? newsDb.length + ' 則' : '未載入';
+  document.getElementById('sbRef').textContent = selKb.length + ' 則';
+  const srcTotal = files.length + textRefs.length;
+  document.getElementById('sbSrc').textContent = srcTotal + ' 份';
+  const tplKey = tplAuto ? '自動選擇' : (selTpl ? (selTpl + ' ' + (TPL_DEFS[selTpl]?.name || '')) : '未選擇');
+  document.getElementById('sbTpl').textContent = tplKey;
+}
+
+function openModal() {
+  document.getElementById('apiKeyInput').value = apiKey;
+  document.getElementById('apiModal').classList.add('show');
+}
+function closeModal() { document.getElementById('apiModal').classList.remove('show'); }
+function toggleEye() {
+  const i = document.getElementById('apiKeyInput');
+  i.type = i.type === 'password' ? 'text' : 'password';
+}
+function saveKey() {
+  const k = document.getElementById('apiKeyInput').value.trim();
+  if (!k) { toast('⚠️ 請輸入 API Key'); return; }
+  if (!k.startsWith('AIza') && !k.startsWith('AQ.')) { toast('⚠️ API Key 格式錯誤，應以 AIza 或 AQ. 開頭'); return; }
+  apiKey = k;
+  localStorage.setItem('gapi', k);
+  updateStatus(); closeModal();
+  toast('✅ 已儲存！請在本機瀏覽器（Chrome/Edge）開啟此 HTML 後使用。');
+}
+function updateStatus() {
+  const dot = document.getElementById('sDot');
+  const text = document.getElementById('sText');
+  const tag = document.getElementById('mTag');
+  const apiStepRow = document.getElementById('navStep0');
+  const apiStepNum = document.getElementById('apiStepNum');
+  if (apiKey && (apiKey.startsWith('AIza') || apiKey.startsWith('AQ.'))) {
+    dot.className = 's-dot on';
+    text.textContent = '已連線 · Gemini 2.5 Flash';
+    if (tag) tag.textContent = 'Gemini 2.5';
+    if (apiStepNum) { apiStepNum.innerHTML = '✓'; apiStepNum.style.borderColor='var(--teal)'; apiStepNum.style.background='var(--teal)'; apiStepNum.style.color='#fff'; }
+    if (apiStepRow) { apiStepRow.classList.add('done'); }
+  } else {
+    dot.className = 's-dot'; text.textContent = '點此設定 API Key'; if (tag) tag.textContent = 'Gemini';
+    if (apiStepNum) { apiStepNum.innerHTML = '<span>一</span>'; apiStepNum.style.borderColor=''; apiStepNum.style.background=''; apiStepNum.style.color=''; }
+    if (apiStepRow) { apiStepRow.classList.remove('done'); }
+  }
+}
+
+function switchSrcTab(tab) {
+  ['file','text'].forEach(t => {
+    document.getElementById('srcPane' + t.charAt(0).toUpperCase() + t.slice(1))?.classList.toggle('active', t === tab);
+    document.querySelectorAll('.src-tab').forEach((btn, i) => {
+      btn.classList.toggle('active', ['file','text'][i] === tab);
+    });
+  });
+}
+
+function initUpload() {
+  const z = document.getElementById('uploadZone');
+  const i = document.getElementById('fileInput');
+  if (!z || !i) return;
+  z.addEventListener('dragover', e => { e.preventDefault(); z.classList.add('dov'); });
+  z.addEventListener('dragleave', () => z.classList.remove('dov'));
+  z.addEventListener('drop', e => { e.preventDefault(); z.classList.remove('dov'); handleFiles([...e.dataTransfer.files]); });
+  i.addEventListener('change', () => handleFiles([...i.files]));
+}
+
+async function handleFiles(flist) {
+  for (const f of flist) {
+    if (files.find(u => u.name === f.name)) continue;
+    const ext = f.name.split('.').pop().toLowerCase();
+    const e = { name: f.name, size: f.size, text: '', ok: false, type: 'file' };
+    try {
+      if (ext === 'pdf' && typeof pdfjsLib !== 'undefined') { e.text = await extractPdf(f); e.ok = true; }
+      else if (['txt','md','csv'].includes(ext)) { e.text = await f.text(); e.ok = true; }
+      else if (ext === 'docx' && typeof mammoth !== 'undefined') { const ab = await f.arrayBuffer(); const result = await mammoth.extractRawText({ arrayBuffer: ab }); e.text = result.value; e.ok = true; }
+      else if (['jpg','jpeg','png','webp','gif'].includes(ext)) { const b64 = await fileToBase64(f); e.base64 = b64; e.mimeType = f.type || 'image/jpeg'; e.text = `[圖片檔案：${f.name}]`; e.isImage = true; e.ok = true; }
+    } catch(err) { console.error(err); }
+    files.push(e);
+  }
+  renderFiles(); updateStatusBar(); updateSrcPreviewList();
+}
+
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => { const reader = new FileReader(); reader.onload = () => resolve(reader.result.split(',')[1]); reader.onerror = reject; reader.readAsDataURL(file); });
+}
+
+async function extractPdf(file) {
+  const ab = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({ data: ab }).promise;
+  let t = '';
+  for (let i = 1; i <= Math.min(pdf.numPages, 30); i++) { const p = await pdf.getPage(i); const tc = await p.getTextContent(); t += tc.items.map(x => x.str).join(' ') + '\n'; }
+  return t.trim();
+}
+
+function renderFiles() {
+  const l = document.getElementById('fileList');
+  if (!l) return;
+  const fileItems = files.filter(f => f.type === 'file');
+  if (!fileItems.length) { l.innerHTML = '<div style="font-size:11px;color:var(--text-faint);text-align:center;padding:8px;">尚未上傳任何檔案</div>'; return; }
+  l.innerHTML = '';
+  fileItems.forEach((f, i) => {
+    const ext = f.name.split('.').pop().toUpperCase();
+    const icons = {PDF:'📄',TXT:'📝',DOCX:'📘',MD:'📋',CSV:'📊',JPG:'🖼️',JPEG:'🖼️',PNG:'🖼️',WEBP:'🖼️',GIF:'🖼️'};
+    const d = document.createElement('div');
+    d.className = 'src-item';
+    d.innerHTML = `<span>${icons[ext]||'📎'}</span><span class="src-item-name" title="${f.name}">${f.name}</span><span style="color:var(--success);font-size:10px;">${f.ok?'✅':''}</span><span class="src-item-rm" onclick="rmFile(${i})">×</span>`;
+    l.appendChild(d);
+  });
+}
+
+function rmFile(idx) {
+  const fileItems = files.filter(f => f.type === 'file');
+  const target = fileItems[idx];
+  const realIdx = files.findIndex(f => f === target);
+  if (realIdx >= 0) files.splice(realIdx, 1);
+  renderFiles(); updateStatusBar(); updateSrcPreviewList();
+}
+
+async function addTextRef() {
+  const ta = document.getElementById('refContent');
+  const raw = ta ? ta.value.trim() : '';
+  if (!raw) { toast('⚠️ 請先貼上文字內容'); return; }
+  const label = raw.slice(0, 20).replace(/\n/g,' ') + (raw.length > 20 ? '…' : '');
+  textRefs.push({ label, text: raw }); ta.value = '';
+  renderTextRefs(); toast('✅ 已加入參考清單：' + label);
+  updateStatusBar(); updateSrcPreviewList();
+}
+
+function renderTextRefs() {
+  const l = document.getElementById('textRefList');
+  if (!l) return;
+  if (!textRefs.length) { l.innerHTML = ''; return; }
+  l.innerHTML = '';
+  textRefs.forEach((r, i) => {
+    const d = document.createElement('div'); d.className = 'src-item';
+    d.innerHTML = `<span>📝</span><span class="src-item-name">${r.label}</span><span style="color:var(--success);font-size:10px;">✅</span><span class="src-item-rm" onclick="rmTextRef(${i})">×</span>`;
+    l.appendChild(d);
+  });
+}
+
+function rmTextRef(idx) { textRefs.splice(idx, 1); renderTextRefs(); updateStatusBar(); updateSrcPreviewList(); }
+
+async function addUrl() {
+  const inp = document.getElementById('urlInp'); const btn = document.getElementById('urlBtn');
+  const raw = inp.value.trim();
+  if (!raw) { toast('⚠️ 請輸入網址'); return; }
+  let url = raw;
+  if (!/^https?:\/\//.test(url)) url = 'https://' + url;
+  if (urlSources.find(s => s.url === url)) { toast('⚠️ 此網址已加入'); return; }
+  btn.disabled = true; btn.textContent = '擷取中…';
+  try {
+    const proxy = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+    const res = await fetch(proxy); const data = await res.json();
+    const html = data.contents || '';
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    ['script','style','nav','header','footer'].forEach(tag => doc.querySelectorAll(tag).forEach(el => el.remove()));
+    const text = (doc.body?.innerText || doc.body?.textContent || '').replace(/\s{3,}/g,'\n\n').trim();
+    if (!text || text.length < 50) throw new Error('無法擷取有效內容');
+    const title = doc.title || url;
+    urlSources.push({ url, title, text, ok: true });
+    files.push({ name: title, text, ok: true, type: 'url', url });
+    inp.value = ''; toast('✅ 網址內容已擷取：' + title.slice(0, 20));
+    renderUrlList(); updateStatusBar(); updateSrcPreviewList();
+  } catch(e) { toast('❌ ' + (e.message || '網址擷取失敗')); }
+  btn.disabled = false; btn.textContent = '擷取';
+}
+
+function renderUrlList() {
+  const l = document.getElementById('urlList');
+  if (!l) return;
+  const urlItems = files.filter(f => f.type === 'url');
+  if (!urlItems.length) { l.innerHTML = '<div style="font-size:11px;color:var(--text-faint);text-align:center;padding:8px;">尚未加入任何網址</div>'; return; }
+  l.innerHTML = urlItems.map((f,i) => `<div class="src-item"><span>🌐</span><span class="src-item-name">${f.name}</span><span style="color:var(--success);font-size:10px;">✅</span><span class="src-item-rm" onclick="rmUrlFile(${i})">×</span></div>`).join('');
+}
+
+function rmUrlFile(idx) {
+  const urlItems = files.filter(f => f.type === 'url');
+  const target = urlItems[idx];
+  const realIdx = files.findIndex(f => f === target);
+  if (realIdx >= 0) files.splice(realIdx, 1);
+  urlSources = urlSources.filter(s => s.url !== target.url);
+  renderUrlList(); updateStatusBar(); updateSrcPreviewList();
+}
+
+function updateSrcPreviewList() {
+  const el = document.getElementById('srcPreviewList');
+  if (!el) return;
+  const all = [...files, ...textRefs.map(r => ({ name: r.label, type: 'text', ok: true, _ref: r }))];
+
+  // Update count badge
+  const badge = document.getElementById('srcCountBadge');
+  if (badge) { badge.textContent = all.length + ' 份'; badge.style.display = all.length ? 'inline-block' : 'none'; }
+
+  if (!all.length) {
+    el.innerHTML = `<div style="text-align:center;padding:36px;color:var(--text-faint);"><div style="font-size:36px;margin-bottom:10px;opacity:0.4;">📭</div><div style="font-size:13px;font-weight:600;">尚未加入任何補充資料</div><div style="font-size:11px;margin-top:6px;">此步驟可省略，AI 將以主題與知識庫內容生成</div></div>`;
+    return;
+  }
+  el.innerHTML = '';
+  all.forEach((f, idx) => {
+    const card = document.createElement('div');
+    card.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;transition:border-color 0.15s;';
+
+    if (f.isImage && f.base64) {
+      // Image file - show preview + explain how AI uses it
+      card.innerHTML = `
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 13px;cursor:pointer;" onclick="toggleSrcExpand(this)">
+          <span style="font-size:18px;">🖼️</span>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${f.name}</div>
+            <div style="font-size:10px;color:var(--text-faint);">圖片檔案・AI 將以視覺方式分析此圖片內容</div>
+          </div>
+          <span style="font-size:10px;background:var(--success-bg);color:var(--success);padding:2px 8px;border-radius:99px;white-space:nowrap;">✅ 已載入</span>
+          <span style="font-size:11px;color:var(--text-faint);margin-left:4px;">▼</span>
+        </div>
+        <div class="src-expand-body" style="display:none;padding:0 13px 12px;">
+          <img src="data:${f.mimeType};base64,${f.base64}" style="max-width:100%;max-height:200px;border-radius:4px;display:block;margin-bottom:8px;" />
+          <div style="font-size:11px;color:var(--text-md);background:var(--blue-lt);border:1px solid #93c5fd;border-radius:4px;padding:7px 10px;line-height:1.6;">
+            💡 <strong>AI 如何使用此圖片：</strong><br>
+            此圖片以 Base64 格式傳送給 Gemini Vision，AI 可直接「看見」並理解圖片內容，包含文字、圖表、表格等視覺資訊，並將其納入新聞稿撰寫的參考依據。
+          </div>
+        </div>`;
+    } else if (f.type === 'url') {
+      card.innerHTML = `
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 13px;">
+          <span style="font-size:18px;">🌐</span>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${f.name}</div>
+            <div style="font-size:10px;color:var(--text-faint);">網址來源・${f.url||''}</div>
+          </div>
+          <span style="font-size:10px;background:${f.ok?'var(--success-bg)':'var(--error-bg)'};color:${f.ok?'var(--success)':'var(--error)'};padding:2px 8px;border-radius:99px;white-space:nowrap;">${f.ok?'✅ 已解析':'⚠️ 無法解析'}</span>
+        </div>`;
+    } else if (f.type === 'text') {
+      const ref = f._ref;
+      const fullTxt = ref ? ref.text : '';
+      // 存在 element 上避免 innerHTML 注入問題
+      card.innerHTML = `
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 13px;cursor:pointer;" onclick="toggleSrcExpand(this)">
+          <span style="font-size:18px;">📝</span>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${f.name}</div>
+            <div style="font-size:10px;color:var(--text-faint);">貼上文字・共 ${fullTxt.length} 字</div>
+          </div>
+          <span style="font-size:10px;background:var(--success-bg);color:var(--success);padding:2px 8px;border-radius:99px;">✅ 已加入</span>
+          <span style="font-size:11px;color:var(--text-faint);margin-left:4px;">▼ 展開</span>
+        </div>`;
+      // 建立展開區塊，使用 textContent 確保完整顯示（不用 innerHTML，不截斷）
+      const expandBody = document.createElement('div');
+      expandBody.className = 'src-expand-body';
+      expandBody.style.cssText = 'display:none;padding:0 13px 12px;';
+      const textBox = document.createElement('div');
+      textBox.style.cssText = 'font-size:11px;color:var(--text-md);background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:8px 10px;line-height:1.7;white-space:pre-wrap;max-height:400px;overflow-y:auto;';
+      textBox.textContent = fullTxt;  // 完整顯示，不截斷
+      expandBody.appendChild(textBox);
+      card.appendChild(expandBody);
+    } else {
+      // PDF or other file
+      const isPdf = f.name.toLowerCase().endsWith('.pdf');
+      const fullTxt = f.ok ? (f.text || '') : '（無法解析此格式）';
+      const previewTxt = fullTxt.slice(0, 200) + (fullTxt.length > 200 ? '…' : '');
+      const icon = isPdf ? '📄' : '📃';
+      card.innerHTML = `
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 13px;cursor:pointer;" onclick="toggleSrcExpand(this)">
+          <span style="font-size:18px;">${icon}</span>
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${f.name}</div>
+            <div style="font-size:10px;color:var(--text-faint);">上傳檔案${isPdf?' (PDF 已提取文字)':''}</div>
+          </div>
+          <span style="font-size:10px;background:${f.ok?'var(--success-bg)':'var(--error-bg)'};color:${f.ok?'var(--success)':'var(--error)'};padding:2px 8px;border-radius:99px;white-space:nowrap;">${f.ok?'✅ 已解析':'⚠️ 無法解析'}</span>
+          ${f.ok ? '<span style="font-size:11px;color:var(--text-faint);margin-left:4px;">▼ 點擊展開</span>' : ''}
+        </div>
+        ${f.ok ? `<div class="src-expand-body" style="display:none;padding:0 13px 12px;">
+          <div style="font-size:10px;color:var(--text-faint);margin-bottom:5px;">共 ${fullTxt.length} 字・以下為擷取內容預覽</div>
+          <div style="font-size:11px;color:var(--text-md);background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:8px 10px;line-height:1.7;white-space:pre-wrap;max-height:200px;overflow-y:auto;" id="srcExpand_${idx}">${previewTxt}</div>
+          ${fullTxt.length > 200 ? `<button onclick="expandFullSrc(this, ${JSON.stringify(fullTxt)})" style="margin-top:6px;font-size:10px;color:var(--navy);background:var(--blue-lt);border:1px solid var(--navy);border-radius:4px;padding:3px 10px;cursor:pointer;" data-expanded="0">📖 展開全部（共 ${fullTxt.length} 字）</button>` : ''}
+        </div>` : ''}`;
+    }
+    el.appendChild(card);
+  });
+}
+
+function initJson() {
+  const z = document.getElementById('jsonZone'); const i = document.getElementById('jsonFileInput');
+  if (!z || !i) return;
+  z.addEventListener('dragover', e => { e.preventDefault(); z.classList.add('dov'); });
+  z.addEventListener('dragleave', () => z.classList.remove('dov'));
+  z.addEventListener('drop', e => { e.preventDefault(); z.classList.remove('dov'); if(e.dataTransfer.files[0]) loadJson(e.dataTransfer.files[0]); });
+  i.addEventListener('change', () => { if(i.files[0]) loadJson(i.files[0]); });
+  const ai = document.getElementById('jsonAutoInput');
+  if (ai) ai.addEventListener('change', () => { if(ai.files[0]) loadJson(ai.files[0]); });
+}
+
+async function loadJson(file) {
+  try {
+    const t = await file.text(); const d = JSON.parse(t);
+    if (!d.articles || !Array.isArray(d.articles)) { toast('❌ JSON 格式錯誤：需要 {"articles": [...]} 結構'); return; }
+    newsDb = d.articles;
+    localStorage.setItem('ks_lastName', file.name);
+    updateKbUi(true); toast(`✅ 知識庫載入成功：共 ${newsDb.length} 則新聞稿`); updateStatusBar();
+  } catch(e) { toast('❌ JSON 解析失敗：' + e.message); }
+}
+
+function updateKbUi(ok) {
+  const badge = document.getElementById('kbBadge');
+  const jz = document.getElementById('jsonZone');
+  const statusBox = document.getElementById('kbStatusBox');
+  const statusMsg = document.getElementById('kbStatusMsg');
+  if (ok && newsDb.length > 0) {
+    badge.textContent = `${newsDb.length} 則`; badge.className = 'kb-badge ok';
+    if (jz) jz.style.display = 'none';
+    if (statusBox) { statusBox.style.display = 'block'; statusMsg.textContent = `✅ 知識庫已載入：共 ${newsDb.length} 則新聞稿，可在右方搜尋並勾選參考範本`; }
+    renderKbTaxFilter(); renderKbCats(); updateLeftChosenUI();
+  } else {
+    badge.textContent = '未載入'; badge.className = 'kb-badge';
+    if (jz) jz.style.display = 'block';
+    if (statusBox) statusBox.style.display = 'none';
+  }
+}
+
+function renderKbTaxFilter() {
+  const bar = document.getElementById('kbTaxFilter');
+  if (!bar) return;
+  const cats = {};
+  newsDb.forEach(x => { const c = x.category || '其他'; cats[c] = (cats[c] || 0) + 1; });
+  const sortedCats = Object.entries(cats).sort((a, b) => b[1] - a[1]);
+  bar.innerHTML = `<span class="kb-filter-label">🔖 限定稅目搜尋（可複選，不選則搜全部）：</span>`;
+  sortedCats.forEach(([c, n]) => {
+    const btn = document.createElement('button');
+    const isActive = selectedTaxCats.has(c);
+    btn.textContent = `${c} (${n})`;
+    btn.style.cssText = `padding:3px 10px;border-radius:99px;border:1.5px solid ${isActive?'var(--navy)':'var(--border)'};background:${isActive?'var(--navy)':'var(--bg)'};color:${isActive?'#fff':'var(--text-lt)'};font-size:11px;cursor:pointer;font-family:'Noto Sans TC',sans-serif;transition:0.15s;`;
+    btn.onclick = () => {
+      if (selectedTaxCats.has(c)) { selectedTaxCats.delete(c); btn.style.background='var(--bg)'; btn.style.borderColor='var(--border)'; btn.style.color='var(--text-lt)'; }
+      else { selectedTaxCats.add(c); btn.style.background='var(--navy)'; btn.style.borderColor='var(--navy)'; btn.style.color='#fff'; }
+      const q = document.getElementById('kbSI').value.trim();
+      if (q) { searchKb(); } else { renderKbCats(); }
+    };
+    bar.appendChild(btn);
+  });
+  bar.style.display = 'flex';
+}
+
+function renderKbCats() {
+  const r = document.getElementById('kbResults');
+  r.innerHTML = '';
+  const cats = {};
+  newsDb.forEach(x => { const c = x.category || '其他'; if (!cats[c]) cats[c] = []; cats[c].push(x); });
+  const sorted = Object.entries(cats).sort((a, b) => b[1].length - a[1].length);
+  const pool = selectedTaxCats.size > 0 ? sorted.filter(([c]) => selectedTaxCats.has(c)) : sorted;
+  if (!pool.length) { r.innerHTML = `<div class="kb-empty">無符合的新聞稿</div>`; return; }
+  const total = pool.reduce((n, [,arr]) => n + arr.length, 0);
+
+  // 計數提示列
+  const hint = document.createElement('div');
+  hint.style.cssText = 'font-size:10px;color:var(--text-faint);padding:4px 0 8px;flex-shrink:0;';
+  hint.textContent = `共 ${total} 則${selectedTaxCats.size > 0 ? '（已篩選稅目）' : ''}・點標題預覽，點 ＋ 加入參考`;
+  r.appendChild(hint);
+
+  // 直接展開顯示所有新聞稿，按稅目分組但不折疊
+  pool.forEach(([cat, items]) => {
+    // 稅目分隔標題列
+    const catHd = document.createElement('div');
+    catHd.style.cssText = 'display:flex;align-items:center;gap:8px;padding:6px 4px 4px;margin-top:6px;border-bottom:1.5px solid var(--border-md);flex-shrink:0;';
+    catHd.innerHTML = `<span style="font-size:11px;font-weight:700;color:var(--navy);letter-spacing:0.5px;">${cat}</span><span style="font-size:10px;color:var(--text-faint);background:var(--surface-3);padding:1px 7px;border-radius:99px;">${items.length} 則</span>`;
+    r.appendChild(catHd);
+    // 直接渲染所有項目
+    items.forEach(item => r.appendChild(buildKbRow(item)));
+  });
+}
+
+function toggleKbGroup(gid, items) {
+  const body = document.getElementById(gid); const arrow = document.getElementById(gid + '_arrow');
+  if (!body) return;
+  const isOpen = body.style.display !== 'none';
+  if (isOpen) { body.style.display = 'none'; if (arrow) { arrow.textContent = '▶'; arrow.classList.remove('open'); } }
+  else {
+    if (!body._rendered) { const srcItems = items || body._items || []; srcItems.forEach(item => body.appendChild(buildKbRow(item))); body._rendered = true; }
+    body.style.display = 'flex'; body.style.flexDirection = 'column'; body.style.gap = '4px'; body.style.paddingTop = '4px';
+    if (arrow) { arrow.textContent = '▶'; arrow.classList.add('open'); }
+    setTimeout(() => { const hd = body.previousSibling; if (hd) hd.scrollIntoView({ behavior:'smooth', block:'nearest' }); }, 50);
+  }
+}
+
+function buildKbRow(item) {
+  const isSel = !!selKb.find(s => s.id === item.id);
+  const row = document.createElement('div');
+  row.className = 'kb-item' + (isSel ? ' sel' : '');
+  row.id = 'kbI_' + item.id;
+  row.style.marginBottom = '4px';
+  const info = document.createElement('div'); info.className = 'kb-item-info'; info.title = '點擊預覽全文';
+  info.innerHTML = `<div class="kb-item-title">${item.title||'（無標題）'}</div><div class="kb-item-tags">${(item.keywords||[]).slice(0,3).map(k=>`<span class="kb-tag">${k}</span>`).join('')}</div>`;
+  info.addEventListener('click', () => openKbPreview(item));
+  const btn = document.createElement('button'); btn.className = 'kb-item-btn'; btn.title = isSel ? '取消選取' : '加入參考';
+  btn.textContent = isSel ? '✓' : '+';
+  btn.addEventListener('click', e => { e.stopPropagation(); toggleKbItem(item); });
+  row.appendChild(info); row.appendChild(btn);
+  return row;
+}
+
+function searchKb() {
+  const raw = document.getElementById('kbSI').value.trim();
+  if (!raw) { renderKbCats(); return; }
+  const q = normalize(raw); const terms = q.split(/[\s,，]+/).filter(Boolean);
+  const pool = selectedTaxCats.size > 0 ? newsDb.filter(item => selectedTaxCats.has(item.category || '其他')) : newsDb;
+  const res = pool.map(item => {
+    const title = normalize(item.title||''), category = normalize(item.category||'');
+    const keywords = (item.keywords||[]).map(normalize), summary = normalize(item.summary||''), fulltext = normalize(item.full_text||'');
+    let s = 0;
+    terms.forEach(t => { if (title.includes(t)) s+=10; if (category.includes(t)) s+=6; if (keywords.some(k=>k.includes(t))) s+=4; if (summary.includes(t)) s+=2; if (fulltext.includes(t)) s+=1; });
+    return {...item, s};
+  }).filter(x => x.s > 0).sort((a, b) => b.s - a.s).slice(0, 50);
+  renderKbRes(res, raw);
+}
+
+function renderKbRes(res, q) {
+  const c = document.getElementById('kbResults');
+  if (!res.length) { c.innerHTML = `<div class="kb-empty">找不到「${q}」相關新聞稿</div>`; return; }
+  const hint = document.createElement('div');
+  hint.style.cssText = 'display:flex;align-items:center;gap:8px;padding-bottom:8px;flex-wrap:wrap;';
+  hint.innerHTML = `<button onclick="clearKbSearch()" style="font-size:10px;color:var(--navy);background:var(--blue-lt);border:1px solid var(--navy);border-radius:4px;padding:2px 9px;cursor:pointer;">← 回全部分類</button><span style="font-size:10px;color:var(--text-faint);">找到 ${res.length} 筆｜點標題預覽，點 ＋ 加入參考</span>`;
+  c.innerHTML = '';
+  c.appendChild(hint);
+  res.forEach(item => {
+    const isSel = selKb.find(s => s.id === item.id);
+    const row = document.createElement('div');
+    row.className = 'kb-item' + (isSel ? ' sel' : '');
+    row.id = 'kbI_' + item.id;
+    row.style.marginBottom = '5px';
+    row.innerHTML = `<div class="kb-item-info" onclick="openKbPreview(${JSON.stringify(item).replace(/"/g,'&quot;')})" title="點擊預覽全文"><div class="kb-item-title">${item.title||'（無標題）'}</div><div class="kb-item-tags">${item.category?`<span class="kb-tag cat">${item.category}</span>`:''} ${(item.keywords||[]).slice(0,3).map(k=>`<span class="kb-tag">${k}</span>`).join('')}</div></div><button class="kb-item-btn" onclick="event.stopPropagation();toggleKbItem(${JSON.stringify(item).replace(/"/g,'&quot;')})" title="${isSel?'取消選取':'加入參考'}">${isSel?'✓':'+'}</button>`;
+    if (isSel) { const btn = row.querySelector('.kb-item-btn'); if(btn){btn.style.borderColor='var(--teal)';btn.style.background='var(--teal)';btn.style.color='#fff';} }
+    c.appendChild(row);
+  });
+}
+
+function toggleKbItem(item) {
+  const idx = selKb.findIndex(s => s.id === item.id);
+  const el = document.getElementById('kbI_' + item.id);
+  if (idx >= 0) {
+    selKb.splice(idx, 1); el?.classList.remove('sel');
+    if (el) { const btn = el.querySelector('.kb-item-btn'); if (btn) { btn.textContent='+'; btn.style.borderColor='var(--navy)'; btn.style.background='var(--blue-lt)'; btn.style.color='var(--navy)'; } }
+  } else {
+    if (selKb.length >= 10) { toast('⚠️ 最多選擇 10 則參考範本'); return; }
+    selKb.push(item); el?.classList.add('sel');
+    if (el) { const btn = el.querySelector('.kb-item-btn'); if (btn) { btn.textContent='✓'; btn.style.borderColor='var(--teal)'; btn.style.background='var(--teal)'; btn.style.color='#fff'; } }
+  }
+  updateKbSelBar(); updateLeftChosenUI(); updateStatusBar();
+}
+
+function updateKbSelBar() {
+  const wrap = document.getElementById('chosenWrap'); const cnt = document.getElementById('chosenCnt'); const body = document.getElementById('chosenBody');
+  if (!wrap) return;
+  if (selKb.length === 0) { wrap.classList.remove('show'); cnt.textContent = '0'; body.innerHTML = ''; return; }
+  wrap.classList.add('show'); cnt.textContent = selKb.length;
+  body.innerHTML = selKb.map(item => {
+    const itemJson = JSON.stringify(item).replace(/"/g,'&quot;');
+    return `<div class="kb-chip"><span title="${item.title||''}">${item.title ? item.title.slice(0,18)+(item.title.length>18?'…':'') : '（無標題）'}</span><button onclick="toggleKbItem(${itemJson})" title="移除">✕</button></div>`;
+  }).join('');
+}
+
+function updateLeftChosenUI() {
+  const el = document.getElementById('kbLeftChosen'); const list = document.getElementById('kbLeftChosenList'); const cnt = document.getElementById('kbLeftCnt');
+  if (!el) return;
+  if (selKb.length === 0) { el.style.display = 'none'; return; }
+  el.style.display = 'block'; cnt.textContent = selKb.length;
+  list.innerHTML = selKb.map(item => {
+    const itemJson = JSON.stringify(item).replace(/"/g,'&quot;');
+    return `<div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--teal-lt);border:1px solid #86efac;border-radius:var(--radius-sm);"><div style="flex:1;min-width:0;cursor:pointer;" onclick="openKbPreview(${itemJson})"><div style="font-size:12px;font-weight:700;color:var(--teal);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${item.title||'（無標題）'}</div><div style="font-size:10px;color:var(--text-faint);">${item.category||''}</div></div><button onclick="toggleKbItem(${itemJson})" style="border:none;background:rgba(0,0,0,0.08);border-radius:50%;width:20px;height:20px;cursor:pointer;color:var(--text-lt);font-size:12px;display:flex;align-items:center;justify-content:center;">✕</button></div>`;
+  }).join('');
+}
+
+function clearKbSel() { selKb = []; document.querySelectorAll('.kb-item').forEach(e => e.classList.remove('sel')); updateKbSelBar(); updateLeftChosenUI(); updateStatusBar(); }
+function clearKbSearch() { document.getElementById('kbSI').value = ''; renderKbCats(); }
+function getKbCtx() {
+  if (!selKb.length) return '';
+  return selKb.map((item, i) => `【參考範本 ${i+1}：${item.title}】\n分類：${item.category||''}\n${item.full_text||item.summary||''}`).join('\n\n---\n\n');
+}
+
+async function autoSearchKbFromMain() {
+  const raw = (document.getElementById('mainContent')?.value || '').trim();
+  if (!raw) { toast('⚠️ 請先在步驟二填寫新聞稿主題'); return; }
+  if (!newsDb.length) { toast('⚠️ 請先上傳知識庫 JSON'); return; }
+
+  const bar = document.getElementById('kwPickerBar');
+  const chips = document.getElementById('kwPickerChips');
+  if (!bar || !chips) return;
+
+  let keywords = [];
+
+  // 若有 API Key，先用 AI 萃取關鍵詞（至少3個，最多6個）
+  if (apiKey && (apiKey.startsWith('AIza') || apiKey.startsWith('AQ.'))) {
+    bar.style.display = 'block';
+    chips.innerHTML = '<span style="font-size:11px;color:var(--text-lt);">⏳ AI 分析中，請稍候…</span>';
+    try {
+      const kwPrompt = `你是台灣稅務新聞稿的資深編輯，精通各類稅法與行政作業。
+
+請分析以下新聞稿主題，從稅務專業角度萃取 3 至 6 個「最有搜尋價值」的關鍵詞。
+
+【萃取原則】
+1. 優先選擇「稅種名稱」（如：房地合一稅、綜合所得稅、營業稅）
+2. 其次選擇「法律行為或情境」（如：出售、申報、扣抵、免稅、查核）
+3. 再次選擇「特定對象或制度」（如：網路賣家、電商、非居住者、發票）
+4. 避免選擇太泛用的詞（如：民眾、說明、注意、辦理、稅務）
+5. 關鍵詞應能直接用於在歷史新聞稿資料庫中搜尋到相似文章
+
+【輸出格式】
+只輸出關鍵詞，每個詞以空格分隔，不超過6個，不加任何說明、標點或換行。
+
+主題內容：
+${raw.slice(0, 600)}`;
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${selModel}:generateContent?key=${apiKey}`;
+      const resp = await fetch(url, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ contents:[{ parts:[{text:kwPrompt}] }], generationConfig:{maxOutputTokens:120,temperature:0.3} }) });
+      const data = await resp.json();
+      const kwText = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+      keywords = kwText.trim().split(/[\s,，、\n]+/).map(k=>k.trim()).filter(k => k.length >= 2 && k.length <= 12).slice(0, 6);
+    } catch(e) { /* fallback below */ }
+  }
+
+  // Fallback：本地語意萃取（優先比對知識庫稅目，再提取中文詞）
+  if (keywords.length < 3) {
+    const topic = raw;
+    // 優先：比對知識庫現有稅目分類名稱
+    const taxCats = [...new Set(newsDb.map(x => x.category || '').filter(Boolean))];
+    const catMatches = taxCats.filter(cat => topic.includes(cat));
+    // 次要：從全文提取有意義的2-6字中文詞，過濾停用詞
+    const stopwords = new Set(['以下','如有','適用','申報','依照','規定','相關','注意','提醒','說明','辦理','民眾','國稅','財政','高雄','稅局','納稅','義務','人應','請注','請依','正確','如未','應於','依規','各類','相關規','應依法','應申報','罰鍰']);
+    const norm = normalize(topic);
+    const extracted = [...new Set((norm.match(/[一-鿿]{2,6}/g) || []))].filter(w => !stopwords.has(w) && w.length >= 2);
+    // 合併：優先用稅目名稱，補足到3個
+    const merged = [...new Set([...keywords, ...catMatches, ...extracted])].slice(0, 6);
+    keywords = merged.length >= 3 ? merged.slice(0, 6) : merged;
+  }
+
+  if (!keywords.length) {
+    bar.style.display = 'none';
+    toast('⚠️ 無法從主題中擷取關鍵字，請手動輸入');
+    return;
+  }
+
+  // 渲染勾選框，預設全選
+  renderKwChips(keywords);
+  bar.style.display = 'block';
+  // 清空自訂輸入框
+  const inp = document.getElementById('kwCustomInput');
+  if (inp) inp.value = '';
+}
+
+function renderKwChips(keywords) {
+  const chips = document.getElementById('kwPickerChips');
+  if (!chips) return;
+  chips.innerHTML = '';
+  keywords.forEach(kw => {
+    const label = document.createElement('label');
+    label.style.cssText = 'display:inline-flex;align-items:center;gap:5px;background:#fff;border:1.5px solid #3b82f6;border-radius:99px;padding:3px 10px 3px 12px;font-size:12px;color:#1e40af;cursor:pointer;user-select:none;';
+    const cb = document.createElement('input');
+    cb.type = 'checkbox'; cb.checked = true; cb.value = kw;
+    cb.style.cssText = 'width:13px;height:13px;accent-color:#1d4ed8;cursor:pointer;';
+    label.appendChild(cb);
+    label.appendChild(document.createTextNode(kw));
+    // 刪除按鈕
+    const del = document.createElement('span');
+    del.textContent = '×';
+    del.style.cssText = 'margin-left:2px;color:#93c5fd;font-size:13px;cursor:pointer;line-height:1;';
+    del.onclick = (e) => { e.preventDefault(); e.stopPropagation(); label.remove(); };
+    label.appendChild(del);
+    chips.appendChild(label);
+  });
+}
+
+function addCustomKw() {
+  const inp = document.getElementById('kwCustomInput');
+  if (!inp) return;
+  const kw = inp.value.trim();
+  if (!kw) { toast('⚠️ 請輸入關鍵詞'); return; }
+  if (kw.length < 1 || kw.length > 20) { toast('⚠️ 關鍵詞長度需在 1~20 字之間'); return; }
+  const chips = document.getElementById('kwPickerChips');
+  const existing = [...chips.querySelectorAll('input[type=checkbox]')].map(c => c.value);
+  if (existing.includes(kw)) { toast('⚠️ 此關鍵詞已存在'); inp.value = ''; return; }
+  renderKwChips([...existing, kw]);
+  inp.value = '';
+  document.getElementById('kwPickerBar').style.display = 'block';
+  toast('✅ 已新增關鍵詞：' + kw);
+}
+
+function execKwSearch() {
+  const chips = document.getElementById('kwPickerChips');
+  if (!chips) return;
+  const checked = [...chips.querySelectorAll('input[type=checkbox]:checked')].map(cb => cb.value);
+  if (!checked.length) { toast('⚠️ 請至少勾選一個關鍵詞'); return; }
+  document.getElementById('kbSI').value = checked.join(' ');
+  searchKb();
+  document.getElementById('kwPickerBar').style.display = 'none';
+  toast('🔍 已依「' + checked.join('、') + '」搜尋');
+}
+
+function initMainContentAutoSearch() {
+  const el = document.getElementById('mainContent'); if (!el) return;
+  let timer = null;
+  el.addEventListener('input', () => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      if (newsDb.length > 0 && el.value.trim().length > 5) {
+        const words = normalize(el.value.trim()).slice(0, 120).match(/[一-鿿]{2,6}/g) || [];
+        const unique = [...new Set(words)].slice(0, 5);
+        if (unique.length) { document.getElementById('kbSI').value = unique.join(' '); searchKb(); }
+      } else if (!el.value.trim()) { clearKbSearch(); }
+    }, 1200);
+  });
+}
+
+let kbPrevItem = null;
+function openKbPreview(item) {
+  kbPrevItem = item;
+  document.getElementById('kbPrevTitle').textContent = item.title || '（無標題）';
+  const meta = document.getElementById('kbPrevMeta');
+  let tags = '';
+  if (item.category) tags += `<span class="kb-tag cat" style="font-size:11px;padding:2px 9px;">${item.category}</span>`;
+  (item.keywords||[]).forEach(k => { tags += `<span class="kb-tag" style="font-size:11px;padding:2px 9px;">${k}</span>`; });
+  meta.innerHTML = tags;
+  document.getElementById('kbPrevText').textContent = item.full_text || item.summary || '（無內容）';
+  updatePrevSelBtn();
+  document.getElementById('kbPrevModal').classList.add('show');
+}
+function closeKbPreview() { document.getElementById('kbPrevModal').classList.remove('show'); kbPrevItem = null; }
+function updatePrevSelBtn() {
+  if (!kbPrevItem) return;
+  const btn = document.getElementById('kbPrevSelBtn');
+  const isSel = selKb.find(s => s.id === kbPrevItem.id);
+  if (isSel) { btn.textContent = '✕ 取消選取'; btn.className = 'kb-prev-sel-btn remove'; }
+  else { btn.textContent = '＋ 加入參考'; btn.className = 'kb-prev-sel-btn'; }
+}
+function toggleKbFromPreview() { if (!kbPrevItem) return; toggleKbItem(kbPrevItem); updatePrevSelBtn(); }
+
+// ─── 範本定義 ─────────────────────────────
+const TPL_DEFS = {
+  A: { name:'法規宣導型',badge:'A',color:'#1a73e8',keywords:['規定','法條','申報','計算','方式','適用','規範','辦理','得減除','應申報','應繳納'],autoDesc:'內容涉及法規說明或申報計算，適用法規宣導型（A）',structure:`\n▌範本A：法規宣導型\n① 背景說明\n② 法規內容\n③ 舉例說明\n④ 特別提醒\n⑤ 結尾` },
+  B: { name:'查核案例型',badge:'B',color:'#c0392b',keywords:['查核','逃漏','裁罰','罰鍰','補稅','違規','漏報','逃稅','短報','未開立','未申報','查獲'],autoDesc:'內容涉及違規查核或補稅裁罰，適用查核案例型（B）',structure:`\n▌範本B：查核案例型\n① 問題現象\n② 法令規定\n③ 查核案例\n④ 補報提示（選用）\n⑤ 結尾` },
+  C: { name:'民眾詢問型',badge:'C',color:'#27ae60',keywords:['詢問','來電','民眾','如何','是否','能否','疑問','請問','可否','接獲','反映'],autoDesc:'內容來自民眾提問或常見疑義，適用民眾詢問型（C）',structure:`\n▌範本C：民眾詢問型\n① 提問情境\n② 法規依據\n③ 舉例驗證\n④ 提醒例外情形\n⑤ 結尾` },
+  D: { name:'節稅規劃提醒型',badge:'D',color:'#d97706',keywords:['節稅','規劃','傳承','陷阱','誤區','多繳','少繳','差額','反效果','多負擔','注意','當心'],autoDesc:'內容涉及節稅規劃誤區或差額警示，適用節稅規劃提醒型（D）',structure:`\n▌範本D：節稅規劃提醒型\n① 情境導入\n② 法規說明\n③ 反例計算\n④ 正確做法與文件保留\n⑤ 結尾` },
+  E: { name:'活動公告型',badge:'E',color:'#7c3aed',keywords:['活動','講習','宣導','報名','舉辦','公告','期限','截止','課程','服務','申請','歡迎'],autoDesc:'內容為活動公告或服務期限宣導，適用活動公告型（E）',structure:`\n▌範本E：活動公告型\n① 活動目的與基本資訊\n② 報名或辦理方式\n③ 課程或服務內容說明\n④ 聯絡資訊` },
+};
+
+const TPL_UI = {
+  A: { color:'#1a73e8', steps:[{title:'背景說明',formula:'「財政部高雄國稅局表示，〔社會背景或常見情境〕。」'},{title:'法規內容',formula:'「該局說明，依〔法條名稱及條次〕規定，〔法規文字摘要〕。」'},{title:'舉例說明',formula:'「該局舉例說明，〔甲君案例，含具體數字計算〕。」'},{title:'特別提醒',formula:'「該局特別提醒，〔注意事項或申報期限〕。」'},{title:'結尾服務資訊',formula:'「如有疑義，可撥打免費服務電話0800-000-321洽詢，或至該局網站利用「國稅小幫手」線上查詢。」'}], examples:[{tag:'高雄',title:'取得房地原因不同，申報房地合一稅可減除成本大不同！',desc:'說明贈與取得 vs 買賣取得的成本計算差異'},{tag:'台北',title:'公司分配現金股利6個月未給付，應視同給付',desc:'完整引用所得稅法施行細則第82條'}], tips:['例示人物慣用「甲君」「甲公司」，金額須具體','法條引用格式：「依〔法律名稱〕第〔條〕第〔項〕規定」','適用主題：所得稅、房地合一、遺贈稅申報方式說明'] },
+  B: { color:'#c0392b', steps:[{title:'問題現象',formula:'「財政部高雄國稅局表示，〔常見違規現象〕，籲請民眾注意。」'},{title:'法令規定',formula:'「該局說明，依〔相關法令〕規定，〔應遵守義務〕；違反者，〔罰則〕。」'},{title:'查核案例',formula:'「該局近日查核發現，轄內〔甲公司/甲君〕〔違規事實〕，除補徵稅額〔N萬元〕外，並依規定裁處罰鍰。」'},{title:'自動補報免罰提示（選用）',formula:'「如有〔違規情形〕，在未經檢舉或調查前，依稅捐稽徵法第48條之1規定，主動補報補繳，可免予處罰。」'},{title:'結尾服務資訊',formula:'標準結尾句'}], examples:[{tag:'高雄',title:'大樓管委會出租屋頂未辦稅籍，補徵13.7萬元並裁罰',desc:'甲大樓每月銷售額24萬元未依規定開立統一發票'},{tag:'台北',title:'個人間借款利息所得未申報，遭查補稅及罰鍰',desc:'乙君年息100萬元利息所得漏報'}], tips:['查核案例須含具體稅額數字','第4段「自動補報免罰」可依稿件需求選擇加入','適用主題：營業稅逃漏、所得稅短漏報、發票未開立'] },
+  C: { color:'#27ae60', steps:[{title:'提問情境',formula:'「財政部高雄國稅局表示，近日〔接獲民眾詢問〕，〔具體問題情境〕，應如何處理？」'},{title:'法規依據',formula:'「該局說明，依〔法規〕規定，〔解答內容〕。」'},{title:'舉例驗證',formula:'「該局舉例，〔甲君/甲商號案例〕，〔操作結果〕。」'},{title:'提醒例外情形',formula:'「該局提醒，若〔例外情形〕，則〔不同處理方式〕。」'},{title:'結尾服務資訊',formula:'標準結尾句'}], examples:[{tag:'高雄',title:'獨資商號負責人死亡，繼承人繼承貨物免課營業稅',desc:'以陳先生來電詢問父親飲料店繼承問題為開頭'},{tag:'台北',title:'父母贊助子女購屋，房貸誰背贈與稅大不同',desc:'比較贈與稅課稅差異'}], tips:['開頭情境需真實貼近民眾生活','第4段提醒例外情形為此型獨有段落','適用主題：繼承、贈與、特殊交易情形的稅務疑義'] },
+  D: { color:'#d97706', steps:[{title:'情境導入',formula:'「財政部高雄國稅局表示，〔常見規劃情境〕，卻往往忽略〔關鍵稅務細節〕，導致〔反效果〕。」'},{title:'法規說明（正確做法）',formula:'「該局說明，依〔法規〕規定，〔正確的稅務處理方式〕。」'},{title:'反例計算',formula:'「民眾甲君〔錯誤行為〕，原本應納稅額為〔N萬元〕，卻因此多繳〔N萬元〕。」'},{title:'正確做法與文件保留',formula:'「該局提醒，民眾在規劃〔資產傳承/買賣〕時，應〔正確做法〕，並保留〔相關文件〕。」'},{title:'結尾服務資訊',formula:'標準結尾句'}], examples:[{tag:'高雄',title:'民眾贈與房地差一步，稅金竟多12.9萬元！',desc:'甲君代繳土地增值稅被視同贈與，詳細計算錯誤與正確金額差異'},{tag:'台北',title:'股票低價讓售給子女遭核定贈與稅175.6萬元並裁罰',desc:'不相當代價讓與財產的稅務後果'}], tips:['標題通常帶有情緒字眼（「竟多X萬元」）','第3段必須呈現「錯誤金額 vs 正確金額」對比','適用主題：不動產贈與規劃、資產傳承節稅陷阱'] },
+  E: { color:'#7c3aed', steps:[{title:'活動目的與基本資訊',formula:'「財政部高雄國稅局表示，為使〔對象〕瞭解〔目的〕，訂〔日期〕於〔地點〕舉辦〔活動名稱〕，歡迎踴躍參加。」'},{title:'報名或辦理方式',formula:'「該局表示，〔活動〕採〔方式〕，請於〔期限〕辦理，名額有限，額滿為止。」'},{title:'課程或服務內容說明',formula:'「該局進一步說明，〔課程表或服務項目細節〕。」'},{title:'聯絡資訊',formula:'「如需瞭解相關資訊，可撥打〔活動專線〕洽詢，或至國稅局網站查詢。」'}], examples:[{tag:'高雄',title:'高雄國稅局舉辦租稅法規講習，歡迎線上報名',desc:'3月23–24日講習會，包含課程表'},{tag:'台北',title:'114年度綜合所得稅稅額試算服務申請期限至3月16日止',desc:'說明申請類型及各申辦管道'}], tips:['日期、地點、名額等關鍵資訊須置於第1段','聯絡電話優先使用活動專線','適用主題：講習會、申報期限公告、便民服務說明'] },
+};
+
+let tplModalCurrent = '';
+
+function showTplDetail(key) {
+  const def = TPL_DEFS[key]; const ui = TPL_UI[key]; tplModalCurrent = key;
+  const badge = document.getElementById('tplModalBadge');
+  badge.textContent = def.badge + ' ' + def.name; badge.style.background = ui.color;
+  document.getElementById('tplModalName').textContent = def.name;
+  document.getElementById('tplModalSub').textContent = {A:'說明法規內容、宣導申報義務與計算方式',B:'揭示違規查核情形，強調補稅罰鍰後果',C:'以民眾實際來電提問為引子，解答常見稅務疑義',D:'揭示常見節稅誤區，以反面案例警示民眾',E:'公告講習、宣導活動、申報期限等行政事務資訊'}[key];
+  document.getElementById('tplModalUseBtn').style.background = ui.color;
+  let html = `<div><div class="tpl-modal-section-label">段落結構</div><div class="tpl-modal-steps">`;
+  ui.steps.forEach((s, i) => { html += `<div class="tpl-modal-step"><div class="tpl-modal-step-num" style="background:${ui.color}">${i+1}</div><div class="tpl-modal-step-body"><div class="tpl-modal-step-title">${s.title}</div><div class="tpl-modal-step-formula">${s.formula}</div></div></div>`; });
+  html += `</div></div><div><div class="tpl-modal-section-label">典型案例</div><div class="tpl-modal-examples">`;
+  ui.examples.forEach(e => { html += `<div class="tpl-modal-ex"><span class="tpl-modal-ex-tag">${e.tag}</span><div class="tpl-modal-ex-title">${e.title}</div><div class="tpl-modal-ex-desc">${e.desc}</div></div>`; });
+  html += `</div></div><div><div class="tpl-modal-section-label">寫作要點</div><div class="tpl-modal-tips">`;
+  ui.tips.forEach(t => { html += `<div class="tpl-modal-tip"><span style="color:var(--text-faint);flex-shrink:0;">—</span>${t}</div>`; });
+  html += `</div></div>`;
+  document.getElementById('tplModalBody').innerHTML = html;
+  const rp = document.getElementById('tplDetailRight');
+  if (rp) rp.innerHTML = `<div style="padding:4px 0;"><div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;"><span style="background:${ui.color};color:#fff;padding:4px 12px;border-radius:5px;font-size:11px;font-weight:700;">${def.badge} ${def.name}</span></div>${html}</div>`;
+  document.getElementById('tplDetailModal').classList.add('open');
+}
+function closeTplDetail() { document.getElementById('tplDetailModal').classList.remove('open'); tplModalCurrent = ''; }
+function useTplFromModal() {
+  if (!tplModalCurrent) return;
+  const toggle = document.getElementById('tplAutoToggle');
+  if (toggle.checked) { toggle.checked = false; onTplAutoToggle(); }
+  selectTpl(tplModalCurrent); closeTplDetail();
+}
+
+function onTplAutoToggle() {
+  tplAuto = document.getElementById('tplAutoToggle').checked;
+  const cards = document.querySelectorAll('.tpl-card');
+  if (tplAuto) {
+    selTpl = '';
+    cards.forEach(c => { c.classList.add('disabled'); c.classList.remove('active'); });
+    document.querySelectorAll('.tpl-sel-check').forEach(c => c.style.display = 'none');
+    document.getElementById('tplAutoHint').classList.remove('show');
+    // 自動模式：右側顯示自動選擇說明
+    const rp = document.getElementById('tplDetailRight');
+    if (rp) rp.innerHTML = `<div class="tpl-detail-placeholder">
+      <div class="tpl-detail-icon">🤖</div>
+      <div style="font-size:13px;font-weight:600;color:var(--text-lt);">自動選擇模式</div>
+      <div style="font-size:11px;color:var(--text-faint);margin-top:6px;line-height:1.6;">AI 將依您填寫的主題內容<br>自動判斷最適合的範本，<br>並在產出後顯示選定的結構說明</div>
+      <div style="margin-top:12px;font-size:11px;background:#f0f7ff;border:1px solid #bfdbfe;border-radius:6px;padding:8px 12px;color:#1e40af;text-align:left;">
+        <div style="font-weight:700;margin-bottom:4px;">可選擇的範本類型：</div>
+        ${Object.entries(TPL_DEFS).map(([k,d])=>`<div style="padding:2px 0;">・<strong>${d.badge} ${d.name}</strong>：${d.autoDesc.replace(/內容為|，適用.+$/g,'')}</div>`).join('')}
+      </div>
+    </div>`;
+  } else {
+    cards.forEach(c => c.classList.remove('disabled'));
+    if (!selTpl) selectTpl('A');
+  }
+  updateStatusBar();
+}
+
+function selectTpl(key) {
+  if (tplAuto) return;
+  selTpl = key;
+  // Update card visual states
+  document.querySelectorAll('.tpl-card').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.tpl-sel-check').forEach(c => c.style.display = 'none');
+  document.getElementById('tplCard_' + key)?.classList.add('active');
+  const chk = document.getElementById('chk_' + key);
+  if (chk) chk.style.display = 'inline';
+  // Show structure in right panel
+  const ui = TPL_UI[key]; const def = TPL_DEFS[key];
+  const rp = document.getElementById('tplDetailRight');
+  if (rp) {
+    let html = `<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding:10px 14px;background:${ui.color}18;border:1.5px solid ${ui.color}55;border-radius:var(--radius-sm);">
+      <span style="background:${ui.color};color:#fff;padding:4px 12px;border-radius:5px;font-size:11px;font-weight:700;">${def.badge} ${def.name}</span>
+      <span style="font-size:12px;color:var(--success);font-weight:700;">✓ 已選用</span>
+    </div>`;
+    html += `<div style="margin-bottom:12px;"><div class="tpl-modal-section-label">段落結構</div><div class="tpl-modal-steps">`;
+    ui.steps.forEach((s, i) => { html += `<div class="tpl-modal-step"><div class="tpl-modal-step-num" style="background:${ui.color}">${i+1}</div><div class="tpl-modal-step-body"><div class="tpl-modal-step-title">${s.title}</div><div class="tpl-modal-step-formula">${s.formula}</div></div></div>`; });
+    html += `</div></div>`;
+    html += `<div><div class="tpl-modal-section-label">寫作要點</div><div class="tpl-modal-tips">`;
+    ui.tips.forEach(t => { html += `<div class="tpl-modal-tip"><span style="color:var(--text-faint);flex-shrink:0;">—</span>${t}</div>`; });
+    html += `</div></div>`;
+    html += `<div style="margin-top:12px;"><div class="tpl-modal-section-label">典型案例</div><div class="tpl-modal-examples">`;
+    ui.examples.forEach(e => { html += `<div class="tpl-modal-ex"><span class="tpl-modal-ex-tag">${e.tag}</span><div class="tpl-modal-ex-title">${e.title}</div><div class="tpl-modal-ex-desc">${e.desc}</div></div>`; });
+    html += `</div></div>`;
+    rp.innerHTML = `<div style="padding:4px 0;">${html}</div>`;
+  }
+  updateStatusBar();
+}
+
+function autoDetectTpl(mainText) {
+  const scores = {};
+  Object.entries(TPL_DEFS).forEach(([key, def]) => { scores[key] = def.keywords.filter(kw => mainText.includes(kw)).length; });
+  const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+  return sorted[0][1] > 0 ? sorted[0][0] : 'A';
+}
+
+function showAutoTplHint(key) {
+  const hint = document.getElementById('tplAutoHint');
+  if (!key) { hint.classList.remove('show'); return; }
+  const def = TPL_DEFS[key];
+  hint.textContent = `✅ AI 自動選定「${def.badge} ${def.name}」— ${def.autoDesc}`;
+  hint.classList.add('show');
+  document.querySelectorAll('.tpl-card').forEach(c => c.classList.remove('active'));
+  document.getElementById('tplCard_' + key)?.classList.add('active');
+
+  // 同步顯示右側結構說明
+  const ui = TPL_UI[key];
+  const rp = document.getElementById('tplDetailRight');
+  if (rp && ui) {
+    let html = `<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding:10px 14px;background:${ui.color}18;border:1.5px solid ${ui.color}55;border-radius:var(--radius-sm);">
+      <span style="background:${ui.color};color:#fff;padding:4px 12px;border-radius:5px;font-size:11px;font-weight:700;">${def.badge} ${def.name}</span>
+      <span style="font-size:12px;color:#1d4ed8;font-weight:700;">🤖 AI 自動選定</span>
+    </div>`;
+    html += `<div style="margin-bottom:12px;"><div class="tpl-modal-section-label">段落結構</div><div class="tpl-modal-steps">`;
+    ui.steps.forEach((s, i) => { html += `<div class="tpl-modal-step"><div class="tpl-modal-step-num" style="background:${ui.color}">${i+1}</div><div class="tpl-modal-step-body"><div class="tpl-modal-step-title">${s.title}</div><div class="tpl-modal-step-formula">${s.formula}</div></div></div>`; });
+    html += `</div></div>`;
+    html += `<div><div class="tpl-modal-section-label">寫作要點</div><div class="tpl-modal-tips">`;
+    ui.tips.forEach(t => { html += `<div class="tpl-modal-tip"><span style="color:var(--text-faint);flex-shrink:0;">—</span>${t}</div>`; });
+    html += `</div></div>`;
+    html += `<div style="margin-top:12px;"><div class="tpl-modal-section-label">典型案例</div><div class="tpl-modal-examples">`;
+    ui.examples.forEach(e => { html += `<div class="tpl-modal-ex"><span class="tpl-modal-ex-tag">${e.tag}</span><div class="tpl-modal-ex-title">${e.title}</div><div class="tpl-modal-ex-desc">${e.desc}</div></div>`; });
+    html += `</div></div>`;
+    rp.innerHTML = `<div style="padding:4px 0;">${html}</div>`;
+  }
+}
+
+function buildSys() {
+  const tplKey = tplAuto ? '__AUTO__' : (selTpl || 'A');
+  const tplBlock = tplKey === '__AUTO__'
+    ? `## 新聞稿範本模式（請依內容自動選擇最適合的一種）\n你必須在回應最開頭輸出一行：[TEMPLATE_USED] X（X為A/B/C/D/E）\n判斷依據：\n• A 法規宣導型：說明法規內容、宣導申報義務與計算方式\n• B 查核案例型：揭示違規查核情形，強調補稅罰鍰後果\n• C 民眾詢問型：以民眾實際來電提問為引子，解答稅務疑義\n• D 節稅規劃提醒型：揭示節稅誤區或規劃陷阱，以反面案例警示\n• E 活動公告型：公告講習、宣導活動、申報期限等行政事務\n\n選定後，嚴格按照該範本的段落結構撰寫：\n${Object.entries(TPL_DEFS).map(([k,d]) => d.structure).join('\n\n')}`
+    : `## 新聞稿範本模式（使用者指定：${TPL_DEFS[tplKey].badge} ${TPL_DEFS[tplKey].name}）\n請輸出：[TEMPLATE_USED] ${tplKey}\n${TPL_DEFS[tplKey].structure}`;
+  return `你是財政部高雄國稅局的專業新聞稿撰寫助手。你熟悉台灣稅務法規及政府公文寫作風格，並已掌握以下內建知識庫：\n\n${KNOWLEDGE}\n\n---\n\n${tplBlock}\n\n---\n\n## 回應格式（必須嚴格使用以下標記）\n[TEMPLATE_USED] （A/B/C/D/E 擇一）\n[TITLE_1] 標題選項一\n[TITLE_2] 標題選項二\n[TITLE_3] 標題選項三\n[TITLE_4] 標題選項四\n[TITLE_5] 標題選項五\n[CONTENT_START]\n（完整新聞稿正文，不含標題，嚴格按選定範本段落結構撰寫）\n[CONTENT_END]\n\n## 寫作風格\n- 語氣：正式嚴謹\n- 稽徵機關：${UNIT}\n- 使用繁體中文\n- 政府公文用語，正式但清晰\n- 金額以「新臺幣（下同）」表示\n- 日期使用民國年`;
+}
+
+function buildGenPrompt(main, ref, ft) {
+  const tplKey = tplAuto ? autoDetectTpl(main) : (selTpl || 'A');
+  let p = `## 新聞稿主題與內容\n${main}`;
+  if (!tplAuto) { p += `\n\n## 指定範本模式\n使用者已選擇「${TPL_DEFS[tplKey].badge} ${TPL_DEFS[tplKey].name}」，請嚴格依照此範本段落結構撰寫，並輸出 [TEMPLATE_USED] ${tplKey}。`; }
+  if (ref) p += `\n\n## 補充參考資料\n${ref}`;
+  if (ft) p += `\n\n## 上傳附件內容\n${ft}`;
+  const kc = getKbCtx();
+  if (kc) p += `\n\n## 資料庫參考範本\n${kc}`;
+  p += `\n\n請依照系統指示，生成完整新聞稿，包含 [TEMPLATE_USED] 標記、5個標題選項與正文。`;
+  return p;
+}
+
+async function callApi(sysPrompt, userPrompt, history=[], imageParts=[]) {
+  if (!apiKey) throw new Error('請先設定 Gemini API Key（點擊右上角）');
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${selModel}:generateContent?key=${apiKey}`;
+  const userParts = [...imageParts.map(img => ({ inline_data: { mime_type: img.mimeType, data: img.base64 } })), { text: userPrompt }];
+  const contents = history.length > 0 ? [...history, { role:'user', parts: userParts }] : [{ role:'user', parts: userParts }];
+  const body = { system_instruction: { parts:[{text:sysPrompt}] }, contents, generationConfig: { temperature:0.75, maxOutputTokens:4096 } };
+  const res = await fetch(url, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
+  if (!res.ok) {
+    const err = await res.json().catch(()=>({})); const msg = err?.error?.message || `HTTP ${res.status}`;
+    if (res.status===403) throw new Error(`API Key 無效或無權限（403）。`);
+    if (res.status===429) throw new Error('API 免費額度已用完（429），請稍後再試。');
+    throw new Error(msg);
+  }
+  const data = await res.json();
+  const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  if (!text) { const reason = data?.candidates?.[0]?.finishReason; if (reason==='SAFETY') throw new Error('內容被安全過濾器封鎖，請調整輸入內容。'); throw new Error('AI 未回傳內容，請重試。（finishReason: ' + (reason||'unknown') + '）'); }
+  return text;
+}
+
+async function typewriter(text) {
+  const d = document.getElementById('cDisplay');
+  const cm = text.match(/\[CONTENT_START\]([\s\S]*?)\[CONTENT_END\]/);
+  const content = cm ? cm[1].trim() : text;
+  d.textContent = ''; d.classList.add('typing');
+  const step = 6;
+  for (let i = 0; i < content.length; i += step) { d.textContent = content.slice(0, i + step); await new Promise(r => setTimeout(r, 10)); }
+  d.textContent = content; d.classList.remove('typing');
+}
+
+async function generate() {
+  const main = document.getElementById('mainContent').value.trim();
+  if (!main) { toast('⚠️ 請先在步驟一填寫新聞稿主題'); goStep(1); return; }
+  if (!apiKey) { openModal(); return; }
+  setLoad(true, 'AI 正在分析資料並生成新聞稿…');
+  chatMsgs = []; chatHist = []; renderChat();
+  let ft = ''; const imageParts = [];
+  for (const f of files) {
+    if (f.isImage && f.base64) { imageParts.push({ base64: f.base64, mimeType: f.mimeType }); ft += `\n\n【圖片附件：${f.name}（已附上圖片供 AI 視覺分析）】`; continue; }
+    if (!f.text) { ft += `\n\n【來源：${f.name}（格式無法解析）】`; continue; }
+    ft += `\n\n${f.type==='url'?`【網址來源：${f.name}】`:`【附件：${f.name}】`}\n${f.text}`;
+  }
+  if (textRefs.length) textRefs.forEach((r, i) => { ft += `\n\n【貼上參考資料 ${i+1}：${r.label}】\n${r.text}`; });
+  const refTextDraft = (document.getElementById('refContent')?.value||'').trim();
+  if (refTextDraft) ft += `\n\n【補充參考資料（草稿）】\n${refTextDraft}`;
+  const sys = buildSys(); const usr = buildGenPrompt(main, '', ft);
+  try {
+    const result = await callApi(sys, usr, [], imageParts);
+    chatHist = [{ role:'user', parts:[{text:usr}] }, { role:'model', parts:[{text:result}] }];
+    setLoad(false); await typewriter(result); parseRender(result);
+    chatMsgs.push({ role:'user', text:'（初始生成）' });
+    chatMsgs.push({ role:'ai', text:'✅ 新聞稿已生成，請選擇標題並確認內容。可在下方輸入修改指示繼續優化。' });
+    renderChat();
+  } catch(e) {
+    setLoad(false); const msg = e.message || '發生未知錯誤'; toast('❌ ' + msg.split('\n')[0]);
+    document.getElementById('cDisplay').innerHTML = `<div class="ph" style="color:var(--error);">⚠️ 生成失敗<br><br>${msg.replace(/\n/g,'<br>')}<br><br><strong>請確認：</strong><br>• API Key 是否正確？（應以 AIza 或 AQ. 開頭）<br>• 請在本機 Chrome/Edge 開啟此 HTML 後使用</div>`;
+  }
+}
+
+async function sendRev() {
+  const inp = document.getElementById('chatInp'); const msg = inp.value.trim();
+  if (!msg) return; if (!curContent) { toast('⚠️ 請先生成新聞稿'); return; } if (!apiKey) { openModal(); return; }
+  inp.value = ''; chatMsgs.push({ role:'user', text:msg }); renderChat();
+  setLoad(true, 'AI 正在修改內容…');
+  const sys = buildSys();
+  const revMsg = `## 當前新聞稿內容\n${curContent}\n\n## 使用者修改指示\n${msg}\n\n請依照指示修改新聞稿，輸出完整修改後版本。`;
+  try {
+    const result = await callApi(sys, revMsg, chatHist);
+    chatHist.push({ role:'user', parts:[{text:revMsg}] }); chatHist.push({ role:'model', parts:[{text:result}] });
+    setLoad(false); await typewriter(result); parseRender(result);
+    chatMsgs.push({ role:'ai', text:'✅ 內容已依指示修改完成。' });
+  } catch(e) { setLoad(false); chatMsgs.push({ role:'ai', text:'❌ ' + (e.message||'請稍後再試') }); }
+  renderChat();
+}
+
+function q(msg) { document.getElementById('chatInp').value = msg; sendRev(); }
+
+function qTitle(msg) { if (!curContent) { toast('⚠️ 請先生成新聞稿'); return; } if (!apiKey) { openModal(); return; } sendTitleRev(msg); }
+function qTitleCustom() {
+  const inp = document.getElementById('titleInp'); const msg = inp.value.trim();
+  if (!msg) { toast('⚠️ 請輸入標題修改需求'); return; } if (!curContent) { toast('⚠️ 請先生成新聞稿'); return; } if (!apiKey) { openModal(); return; }
+  inp.value = ''; sendTitleRev('請根據以下需求重新生成5個標題選項：' + msg + '。必須使用 [TITLE_1] 到 [TITLE_5] 格式標記，並保留原本正文內容不變。');
+}
+async function sendTitleRev(msg) {
+  setTitleLoad(true); const sys = buildSys();
+  const revMsg = `## 當前新聞稿內容\n${curContent}\n\n## 使用者指示\n${msg}`;
+  try {
+    const result = await callApi(sys, revMsg, chatHist);
+    chatHist.push({ role:'user', parts:[{text:revMsg}] }); chatHist.push({ role:'model', parts:[{text:result}] });
+    setTitleLoad(false);
+    const titles = [];
+    for (let i = 1; i <= 5; i++) { const m = result.match(new RegExp(`\\[TITLE_${i}\\]\\s*(.+)`)); if (m) titles.push(m[1].trim()); }
+    if (titles.length) { renderTitles(titles); toast('✅ 標題已更新！'); } else { toast('⚠️ 無法解析標題格式，請再試一次'); }
+  } catch(e) { setTitleLoad(false); toast('❌ ' + (e.message||'請稍後再試')); }
+}
+function setTitleLoad(show) {
+  const ov = document.getElementById('titleOv'); const tsb = document.getElementById('titleSendBtn');
+  if (ov) ov.classList.toggle('show', show); if (tsb) tsb.disabled = show;
+  document.querySelectorAll('.title-edit-bar .qbtn').forEach(b => b.disabled = show);
+}
+function ck(e) { if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendRev();} }
+
+function parseRender(raw) {
+  const tplMatch = raw.match(/\[TEMPLATE_USED\]\s*([A-E])/);
+  if (tplMatch && tplAuto) showAutoTplHint(tplMatch[1]);
+  const titles = [];
+  for (let i = 1; i <= 5; i++) { const m = raw.match(new RegExp(`\\[TITLE_${i}\\]\\s*(.+)`)); if (m) titles.push(m[1].trim()); }
+  const cm = raw.match(/\[CONTENT_START\]([\s\S]*?)\[CONTENT_END\]/);
+  const content = cm ? cm[1].trim() : raw;
+  curContent = content; renderTitles(titles); updateWc(); toast('✅ 新聞稿生成成功！');
+}
+function renderTitles(titles) {
+  const area = document.getElementById('titleArea');
+  if (!titles.length) { area.innerHTML = '<div class="t-empty">未能解析標題，請查看正文</div>'; return; }
+  area.innerHTML = '<div class="title-options">' + titles.map((t,i) => `<div class="title-opt" onclick="selTitle(${i})" id="to${i}"><span class="title-num">${i+1}</span><span class="title-txt">${t}</span></div>`).join('') + '</div>';
+}
+function selTitle(i) {
+  document.querySelectorAll('.title-opt').forEach(x => x.classList.remove('sel'));
+  document.getElementById('to' + i)?.classList.add('sel');
+  selTitle_ = document.getElementById('to' + i)?.querySelector('.title-txt')?.textContent || '';
+  toast('✅ 已選擇標題 ' + (i + 1));
+}
+let selTitle_ = '';
+function updateWc() { const t = document.getElementById('cDisplay').textContent || ''; document.getElementById('wc').textContent = t.replace(/\s/g,'').length + ' 字'; }
+
+function setLoad(show, msg='') {
+  loading = show;
+  const btn = document.getElementById('genBtn'); const btnTop = document.getElementById('genBtnTop');
+  const ov = document.getElementById('ov'); const sb = document.getElementById('sendBtn'); const tsb = document.getElementById('titleSendBtn');
+  if (btn) { btn.disabled = show; btn.classList.toggle('loading', show); }
+  if (btnTop) btnTop.disabled = show; if (sb) sb.disabled = show; if (tsb) tsb.disabled = show;
+  if (ov) { ov.classList.toggle('show', show); }
+  if (msg && document.getElementById('ovMsg')) document.getElementById('ovMsg').textContent = msg;
+}
+
+function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 3200); }
+function renderChat() { const h = document.getElementById('chatHist'); h.innerHTML = chatMsgs.map(m => `<div class="chat-msg ${m.role}">${m.text}</div>`).join(''); h.scrollTop = h.scrollHeight; }
+
+function copyContent() {
+  const t = (selTitle_ ? selTitle_ + '\n\n' : '') + (document.getElementById('cDisplay').textContent || '');
+  if (!t.trim()) { toast('⚠️ 尚無內容可複製'); return; }
+  navigator.clipboard.writeText(t).then(() => toast('✅ 已複製到剪貼簿'));
+}
+function toggleEdit() {
+  isEdit = !isEdit; const d = document.getElementById('cDisplay'); const btn = document.getElementById('editBtn');
+  d.contentEditable = isEdit ? 'true' : 'false'; d.classList.toggle('editable', isEdit);
+  btn.textContent = isEdit ? '💾 儲存編輯' : '✏️ 手動編輯';
+  if (isEdit) { d.focus(); toast('✏️ 手動編輯模式已開啟'); } else { curContent = d.textContent; toast('💾 已儲存手動編輯'); }
+}
+function clearAll() {
+  const t = document.getElementById('cDisplay').textContent?.trim();
+  if (!curContent && !t) return;
+  if (confirm('確定要清除所有內容嗎？')) {
+    curContent = ''; selTitle_ = ''; chatHist = [];
+    document.getElementById('cDisplay').innerHTML = '<div class="ph">內容已清除，請重新生成。</div>';
+    document.getElementById('titleArea').innerHTML = '<div class="t-empty">✦ 點擊「產出新聞稿」後，將顯示 5 個標題供您選擇</div>';
+    chatMsgs = []; renderChat(); updateWc();
+  }
+}
+
+function toggleSrcExpand(header) {
+  const card = header.parentElement;
+  const body = card.querySelector('.src-expand-body');
+  if (!body) return;
+  const isOpen = body.style.display !== 'none';
+  body.style.display = isOpen ? 'none' : 'block';
+  const arrow = header.querySelector('span:last-child');
+  if (arrow && (arrow.textContent === '▼' || arrow.textContent.includes('▼'))) {
+    arrow.textContent = isOpen ? '▼ 點擊展開' : '▲ 收合';
+  }
+}
+
+function expandFullSrc(btn, fullText) {
+  const isExpanded = btn.dataset.expanded === '1';
+  const box = btn.previousElementSibling;
+  if (!box) return;
+  if (isExpanded) {
+    box.textContent = fullText.slice(0, 200) + (fullText.length > 200 ? '…' : '');
+    btn.textContent = `📖 展開全部（共 ${fullText.length} 字）`;
+    btn.dataset.expanded = '0';
+  } else {
+    box.textContent = fullText;
+    btn.textContent = '🔼 收合';
+    btn.dataset.expanded = '1';
+  }
+}
+
+function toggleRefExpand(btn, fullText) {
+  const isExpanded = btn.dataset.expanded === '1';
+  const card = btn.closest('.ref-card');
+  const box = card ? card.querySelector('.ref-preview-box') : null;
+  if (!box) return;
+  if (isExpanded) {
+    box.textContent = fullText.slice(0, 300) + (fullText.length > 300 ? '…' : '');
+    box.style.maxHeight = '120px';
+    btn.textContent = `📖 展開完整內容（共 ${fullText.length} 字）`;
+    btn.dataset.expanded = '0';
+  } else {
+    box.textContent = fullText;
+    box.style.maxHeight = 'none';
+    btn.textContent = '🔼 收合';
+    btn.dataset.expanded = '1';
+  }
+}
+
+function openRefPreview() {
+  const body = document.getElementById('refPrevBody');
+  if (!body) return;
+  body.innerHTML = '';
+  let hasAny = false;
+  const fileItems = files.filter(f => f.type === 'file');
+  if (fileItems.length) {
+    hasAny = true;
+    const sec = document.createElement('div');
+    sec.innerHTML = '<div style="font-size:11px;font-weight:700;color:var(--navy);margin-bottom:8px;letter-spacing:0.5px;text-transform:uppercase;">📁 上傳檔案</div>';
+    fileItems.forEach(f => {
+      const card = document.createElement('div');
+      card.className = 'ref-card';
+      card.style.cssText = 'background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:8px;';
+      if (f.isImage && f.base64) {
+        card.innerHTML = `<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;"><span>🖼️</span><strong style="font-size:12px;">${f.name}</strong><span style="margin-left:auto;font-size:10px;background:var(--success-bg);color:var(--success);padding:2px 7px;border-radius:20px;">✅ 圖片已載入</span></div><img src="data:${f.mimeType};base64,${f.base64}" style="max-width:100%;max-height:200px;border-radius:4px;" /><div style="margin-top:8px;font-size:11px;color:#1e3a8a;background:var(--blue-lt);border:1px solid #93c5fd;border-radius:4px;padding:6px 10px;line-height:1.6;">💡 AI 以視覺方式直接分析此圖片，可識別圖中文字、圖表、表格等資訊。</div>`;
+      } else {
+        const fullTxt = f.ok ? (f.text || '') : '（無法解析此格式）';
+        const previewTxt = fullTxt.slice(0, 300) + (fullTxt.length > 300 ? '…' : '');
+        const needsExpand = f.ok && fullTxt.length > 300;
+        const statusBadge = f.ok
+          ? '<span style="margin-left:auto;font-size:10px;background:var(--success-bg);color:var(--success);padding:2px 7px;border-radius:20px;">✅ 已解析</span>'
+          : '<span style="margin-left:auto;font-size:10px;background:var(--error-bg);color:var(--error);padding:2px 7px;border-radius:20px;">⚠️ 無法解析</span>';
+        const isPdf = f.name.toLowerCase().endsWith('.pdf');
+        // Store full text in a data attribute to avoid JSON injection issues
+        card.innerHTML = `<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><span>${isPdf?'📄':'📃'}</span><strong style="font-size:12px;">${f.name}</strong>${statusBadge}</div><div class="ref-preview-box" style="font-size:11px;color:var(--text-md);line-height:1.7;white-space:pre-wrap;max-height:120px;overflow-y:auto;background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:8px 10px;">${previewTxt}</div>`;
+        if (needsExpand) {
+          const btn = document.createElement('button');
+          btn.dataset.expanded = '0';
+          btn.style.cssText = 'margin-top:7px;font-size:10px;color:var(--navy);background:var(--blue-lt);border:1px solid var(--navy);border-radius:4px;padding:4px 12px;cursor:pointer;';
+          btn.textContent = `📖 展開完整內容（共 ${fullTxt.length} 字）`;
+          btn._fullText = fullTxt;
+          btn.onclick = function() { toggleRefExpand(this, this._fullText); };
+          card.appendChild(btn);
+        }
+      }
+      sec.appendChild(card);
+    });
+    body.appendChild(sec);
+  }
+  if (textRefs.length) {
+    hasAny = true;
+    const sec = document.createElement('div');
+    sec.innerHTML = '<div style="font-size:11px;font-weight:700;color:var(--navy);margin-bottom:8px;letter-spacing:0.5px;text-transform:uppercase;">📝 貼上文字</div>';
+    textRefs.forEach((r, i) => {
+      const previewTxt = r.text.slice(0, 300) + (r.text.length > 300 ? '…' : '');
+      const needsExpand = r.text.length > 300;
+      const card = document.createElement('div');
+      card.className = 'ref-card';
+      card.style.cssText = 'background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:8px;';
+      card.innerHTML = `<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;"><span>📝</span><strong style="font-size:12px;">參考資料 ${i+1}：${r.label}</strong><span style="margin-left:auto;font-size:10px;background:var(--success-bg);color:var(--success);padding:2px 7px;border-radius:20px;">✅ 已加入</span></div><div class="ref-preview-box" style="font-size:11px;color:var(--text-md);line-height:1.7;white-space:pre-wrap;max-height:120px;overflow-y:auto;background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:8px 10px;">${previewTxt}</div>`;
+      if (needsExpand) {
+        const btn = document.createElement('button');
+        btn.dataset.expanded = '0';
+        btn.style.cssText = 'margin-top:7px;font-size:10px;color:var(--navy);background:var(--blue-lt);border:1px solid var(--navy);border-radius:4px;padding:4px 12px;cursor:pointer;';
+        btn.textContent = `📖 展開完整內容（共 ${r.text.length} 字）`;
+        btn._fullText = r.text;
+        btn.onclick = function() { toggleRefExpand(this, this._fullText); };
+        card.appendChild(btn);
+      }
+      sec.appendChild(card);
+    });
+    body.appendChild(sec);
+  }
+  if (!hasAny) {
+    body.innerHTML = `<div style="text-align:center;padding:40px;color:var(--text-faint);"><div style="font-size:40px;margin-bottom:12px;opacity:0.4;">📭</div><div style="font-size:13px;font-weight:600;">目前沒有任何參考資料</div><div style="font-size:11px;margin-top:6px;">請先上傳檔案、貼入網址或輸入文字。</div></div>`;
+  }
+  document.getElementById('refPrevModal').classList.add('show');
+}
+function closeRefPreview() { document.getElementById('refPrevModal').classList.remove('show'); }
+
+function dlTxt() {
+  const title = selTitle_ || ''; const body = document.getElementById('cDisplay').textContent || '';
+  if (!(title + body).trim()) { toast('⚠️ 尚無內容可下載'); return; }
+  const dateStr = new Date().toISOString().slice(0, 10);
+  function xmlEsc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  const paragraphs = body.split('\n'); let paraXml = '';
+  if (title) paraXml += `<text:p text:style-name="Heading1"><text:span text:style-name="T1">${xmlEsc(title)}</text:span></text:p>\n`;
+  paragraphs.forEach(line => { paraXml += `<text:p text:style-name="Text_Body">${xmlEsc(line)}</text:p>\n`; });
+  const contentXml = `<?xml version="1.0" encoding="UTF-8"?><office:document-content xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" office:version="1.3"><office:automatic-styles><style:style style:name="Heading1" style:family="paragraph"><style:text-properties fo:font-size="16pt" fo:font-weight="bold"/></style:style><style:style style:name="Text_Body" style:family="paragraph"><style:paragraph-properties fo:margin-bottom="0.2cm" fo:line-height="150%"/><style:text-properties fo:font-size="12pt"/></style:style><style:style style:name="T1" style:family="text"><style:text-properties fo:font-size="16pt" fo:font-weight="bold"/></style:style></office:automatic-styles><office:body><office:text>${paraXml}</office:text></office:body></office:document-content>`;
+  const metaXml = `<?xml version="1.0" encoding="UTF-8"?><office:document-meta xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" xmlns:dc="http://purl.org/dc/elements/1.1/" office:version="1.3"><office:meta><dc:title>${xmlEsc(title)}</dc:title><dc:creator>財政部高雄國稅局</dc:creator></office:meta></office:document-meta>`;
+  const manifestXml = `<?xml version="1.0" encoding="UTF-8"?><manifest:manifest xmlns:manifest="urn:oasis:names:tc:opendocument:xmlns:manifest:1.0" manifest:version="1.3"><manifest:file-entry manifest:full-path="/" manifest:media-type="application/vnd.oasis.opendocument.text"/><manifest:file-entry manifest:full-path="content.xml" manifest:media-type="text/xml"/><manifest:file-entry manifest:full-path="meta.xml" manifest:media-type="text/xml"/></manifest:manifest>`;
+  const mimetypeStr = 'application/vnd.oasis.opendocument.text';
+  function strToU8(str){ return new TextEncoder().encode(str); }
+  function u8Concat(arrays){ let len=0; arrays.forEach(a=>len+=a.length); const r=new Uint8Array(len); let off=0; arrays.forEach(a=>{r.set(a,off);off+=a.length;}); return r; }
+  function u32LE(n){return new Uint8Array([n&0xff,(n>>8)&0xff,(n>>16)&0xff,(n>>24)&0xff]);}
+  function u16LE(n){return new Uint8Array([n&0xff,(n>>8)&0xff]);}
+  function crc32(data){ let c=0xFFFFFFFF; for(let i=0;i<data.length;i++){c^=data[i];for(let j=0;j<8;j++) c=(c&1)?(0xEDB88320^(c>>>1)):(c>>>1);} return (c^0xFFFFFFFF)>>>0; }
+  function makeEntry(name, data){ const nameB=strToU8(name); const crc=crc32(data); const sig=new Uint8Array([0x50,0x4B,0x03,0x04]); const ver=u16LE(20); const flag=u16LE(0); const method=u16LE(0); const modTime=u16LE(0); const modDate=u16LE(0); const crcB=u32LE(crc); const szB=u32LE(data.length); const nameLen=u16LE(nameB.length); const extra=u16LE(0); const local=u8Concat([sig,ver,flag,method,modTime,modDate,crcB,szB,szB,nameLen,extra,nameB,data]); return {local,name:nameB,crc,size:data.length,method:0}; }
+  const entries=[makeEntry('mimetype',strToU8(mimetypeStr)),makeEntry('META-INF/manifest.xml',strToU8(manifestXml)),makeEntry('content.xml',strToU8(contentXml)),makeEntry('meta.xml',strToU8(metaXml))];
+  let offset=0; const localParts=[]; const cdParts=[];
+  entries.forEach(e=>{ localParts.push(e.local); const cdSig=new Uint8Array([0x50,0x4B,0x01,0x02]); const verMade=u16LE(20); const verNeed=u16LE(20); const flag=u16LE(0); const method=u16LE(e.method); const modTime=u16LE(0); const modDate=u16LE(0); const crcB=u32LE(e.crc); const szB=u32LE(e.size); const nameLen=u16LE(e.name.length); const extra=u16LE(0); const comment=u16LE(0); const disk=u16LE(0); const iattr=u16LE(0); const eattr=u32LE(0); const offB=u32LE(offset); cdParts.push(u8Concat([cdSig,verMade,verNeed,flag,method,modTime,modDate,crcB,szB,szB,nameLen,extra,comment,disk,iattr,eattr,offB,e.name])); offset+=e.local.length; });
+  const cdData=u8Concat(cdParts); const eocd=u8Concat([new Uint8Array([0x50,0x4B,0x05,0x06]),u16LE(0),u16LE(0),u16LE(entries.length),u16LE(entries.length),u32LE(cdData.length),u32LE(offset),u16LE(0)]);
+  const zipData=u8Concat([...localParts,cdData,eocd]);
+  const blob=new Blob([zipData],{type:'application/vnd.oasis.opendocument.text'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='新聞稿_'+dateStr+'.odt'; a.click();
+  toast('✅ ODT 下載成功');
+}
+</script>
+</body>
+</html>
